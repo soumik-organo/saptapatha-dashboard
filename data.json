@@ -1,32 +1,32 @@
 {
   "version": 1,
-  "pushedAt": "2026-02-27T10:52:51.174Z",
+  "pushedAt": "2026-02-27T12:56:36.010Z",
   "manualEntries": [
     {
       "month": "Jan-2026",
       "energy": {
-        "solar": null,
+        "solar": 500,
         "eb": null,
         "dg": null,
-        "total": null,
+        "total": 500,
         "villas": null,
         "common": null,
         "powerFactor": null,
         "cluster": null,
         "daily": null,
-        "status": ""
+        "status": "Green"
       },
       "water": {
-        "dugWell1": 10167,
+        "dugWell1": null,
         "borewell": null,
         "dugWell2": null,
         "missionBhag": null,
-        "total": 10167,
+        "total": null,
         "daysUnavail": null,
         "stability": 100,
         "consumption": null,
         "quality": null,
-        "status": "Green"
+        "status": ""
       },
       "food": {
         "crops": null,
