@@ -1,5 +1,86 @@
 {
   "version": 1,
-  "pushedAt": "2026-02-27T10:14:06.527Z",
-  "manualEntries": []
+  "pushedAt": "2026-02-27T10:48:22.783Z",
+  "manualEntries": [
+    {
+      "month": "Jan-2026",
+      "energy": {
+        "solar": null,
+        "eb": 700,
+        "dg": 1000,
+        "total": 1700,
+        "villas": null,
+        "common": null,
+        "powerFactor": null,
+        "cluster": null,
+        "daily": null,
+        "status": "Red"
+      },
+      "water": {
+        "dugWell1": null,
+        "borewell": null,
+        "dugWell2": null,
+        "missionBhag": null,
+        "total": null,
+        "daysUnavail": null,
+        "stability": 100,
+        "consumption": null,
+        "quality": null,
+        "status": ""
+      },
+      "food": {
+        "crops": null,
+        "planned": null,
+        "actual": null,
+        "variance": null,
+        "families": null,
+        "status": ""
+      },
+      "earth": {
+        "wastes": null,
+        "biodiversity": null,
+        "organicProd": null,
+        "organicReused": null,
+        "organicProc": null,
+        "recycleProd": null,
+        "reuseP": null,
+        "greenCover": null,
+        "status": ""
+      },
+      "air": {
+        "location": "",
+        "pmW1": null,
+        "pmW2": null,
+        "pmW3": null,
+        "pmW4": null,
+        "aqiW1": null,
+        "aqiW2": null,
+        "aqiW3": null,
+        "aqiW4": null,
+        "pm25": null,
+        "pm10": null,
+        "co2": null,
+        "aqi": null,
+        "status": ""
+      },
+      "people": {
+        "totalVillas": 182,
+        "occupied": null,
+        "occupancyPct": 0,
+        "plannedFootfall": null,
+        "actualFootfall": null,
+        "events": null,
+        "status": ""
+      },
+      "shelter": {
+        "plannedTasks": null,
+        "completedTasks": null,
+        "completionPct": null,
+        "civilPct": null,
+        "landscapePct": null,
+        "pestPct": null,
+        "status": ""
+      }
+    }
+  ]
 }
