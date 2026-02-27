@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0065)file:///C:/Users/ORGSYS127/Downloads/Saptapatha_Full_Tracker.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saptapatha — Sustainability Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="./Saptapatha — Sustainability Tracker_files/css2" rel="stylesheet">
+<script src="./Saptapatha — Sustainability Tracker_files/chart.umd.min.js.download"></script>
+<script src="./Saptapatha — Sustainability Tracker_files/xlsx.full.min.js.download"></script>
 <style>
 :root{
   --bg:#0b1512;--bg2:#0f1e18;--bg3:#152820;--panel:#1a3028;--panel2:#1e3830;
@@ -65,6 +65,38 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .btn-change:hover{border-color:var(--border2)!important;color:var(--text2);}
 .btn-clear{background:transparent;border:1px solid rgba(255,82,82,0.35)!important;color:rgba(255,82,82,0.65);}
 .btn-clear:hover{border-color:var(--red)!important;color:var(--red);background:rgba(255,82,82,0.07);}
+.btn-github{background:transparent;border:1px solid rgba(77,184,255,0.4)!important;color:rgba(77,184,255,0.75);}
+.btn-github:hover{border-color:var(--blue)!important;color:var(--blue);background:rgba(77,184,255,0.07);}
+.btn-github.synced{border-color:rgba(45,255,138,0.5)!important;color:var(--accent);}
+.btn-export{background:transparent;border:1px solid var(--border2)!important;color:var(--text3);}
+.btn-export:hover{border-color:var(--text2)!important;color:var(--text2);}
+
+/* ── GitHub / Export / Import modal ── */
+.gh-modal{display:none;position:fixed;inset:0;background:rgba(11,21,18,0.92);z-index:2000;align-items:center;justify-content:center;}
+.gh-modal.show{display:flex;}
+.gh-box{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:32px 28px;width:420px;max-width:95vw;animation:cardIn 0.2s ease;}
+.gh-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.gh-sub{font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:22px;line-height:1.6;}
+.gh-field{margin-bottom:14px;}
+.gh-field label{display:block;font-size:10px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;}
+.gh-field input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:var(--mono);font-size:12px;outline:none;transition:border-color .15s;}
+.gh-field input:focus{border-color:var(--blue);}
+.gh-field input::placeholder{color:var(--text3);}
+.gh-actions{display:flex;gap:10px;margin-top:20px;}
+.gh-btn{flex:1;padding:10px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:var(--sans);transition:all .2s;}
+.gh-btn-primary{background:var(--blue);color:#0b1512;}
+.gh-btn-primary:hover{opacity:.88;}
+.gh-btn-cancel{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.gh-btn-cancel:hover{border-color:var(--text2);}
+.gh-status{font-size:11px;font-family:var(--mono);padding:8px 12px;border-radius:6px;margin-top:12px;display:none;}
+.gh-status.show{display:block;}
+.gh-status.ok{background:rgba(45,255,138,0.1);color:var(--accent);border:1px solid rgba(45,255,138,0.2);}
+.gh-status.err{background:rgba(255,82,82,0.1);color:var(--red);border:1px solid rgba(255,82,82,0.2);}
+.gh-status.loading{background:rgba(77,184,255,0.1);color:var(--blue);border:1px solid rgba(77,184,255,0.2);}
+.gh-divider{height:1px;background:var(--border);margin:20px 0;}
+.gh-hint{font-size:10px;color:var(--text3);font-family:var(--mono);line-height:1.7;background:var(--bg3);padding:10px 12px;border-radius:8px;border-left:2px solid var(--blue);}
+.gh-hint a{color:var(--blue);text-decoration:none;}
+.gh-hint a:hover{text-decoration:underline;}
 
 /* Clear confirm modal */
 #clearModal{display:none;position:fixed;inset:0;background:rgba(11,21,18,0.88);z-index:2000;align-items:center;justify-content:center;}
@@ -373,6 +405,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
       <div class="header-right">
         <div class="file-badge" id="fileBadge">Manual Data</div>
         <div class="period-badge" id="periodBadge">2026</div>
+        <button class="header-btn btn-export" onclick="exportJSON()" title="Export data as JSON">⬇️ Export</button>
+        <label class="header-btn btn-export" style="cursor:pointer;" title="Import JSON backup">
+          ⬆️ Import <input type="file" accept=".json" style="display:none" onchange="importJSON(this)">
+        </label>
+        <button class="header-btn btn-github" id="ghBtn" onclick="openGHModal()" title="Sync with GitHub">☁️ GitHub</button>
         <button class="header-btn btn-entry" onclick="openDrawer()">✏️ Enter Data</button>
         <label class="header-btn btn-drop" style="cursor:pointer;border:1px solid var(--border2);">
           📂 Load Excel <input type="file" accept=".xlsx,.xls" style="display:none" onchange="handleFile(this.files[0])">
@@ -383,14 +420,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
   </header>
 
   <nav class="nav-tabs">
-    <button class="nav-tab active" onclick="showPage('executive',this)">📊 Executive</button>
-    <button class="nav-tab" onclick="showPage('energy',this)">⚡ Energy</button>
-    <button class="nav-tab" onclick="showPage('water',this)">💧 Water</button>
-    <button class="nav-tab" onclick="showPage('food',this)">🌱 Food</button>
-    <button class="nav-tab" onclick="showPage('earth',this)">🌍 Earth</button>
-    <button class="nav-tab" onclick="showPage('air',this)">💨 Air</button>
-    <button class="nav-tab" onclick="showPage('people',this)">👥 People</button>
-    <button class="nav-tab" onclick="showPage('shelter',this)">🏠 Shelter</button>
+    <button class="nav-tab active" onclick="showPage(&#39;executive&#39;,this)">📊 Executive</button>
+    <button class="nav-tab" onclick="showPage(&#39;energy&#39;,this)">⚡ Energy</button>
+    <button class="nav-tab" onclick="showPage(&#39;water&#39;,this)">💧 Water</button>
+    <button class="nav-tab" onclick="showPage(&#39;food&#39;,this)">🌱 Food</button>
+    <button class="nav-tab" onclick="showPage(&#39;earth&#39;,this)">🌍 Earth</button>
+    <button class="nav-tab" onclick="showPage(&#39;air&#39;,this)">💨 Air</button>
+    <button class="nav-tab" onclick="showPage(&#39;people&#39;,this)">👥 People</button>
+    <button class="nav-tab" onclick="showPage(&#39;shelter&#39;,this)">🏠 Shelter</button>
   </nav>
 
   <main class="main">
@@ -524,7 +561,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
     <!-- EARTH -->
     <div id="page-earth" class="page">
-      <div class="section-title">🌍 Earth & Waste</div>
+      <div class="section-title">🌍 Earth &amp; Waste</div>
       <div class="kpi-grid" id="earthKpis"></div>
       <div class="chart-grid">
         <div class="chart-panel"><div class="chart-title">Waste by Type <span>kg</span></div>
@@ -556,7 +593,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
     <!-- PEOPLE -->
     <div id="page-people" class="page">
-      <div class="section-title">👥 People & Occupancy</div>
+      <div class="section-title">👥 People &amp; Occupancy</div>
       <div class="month-filter" id="peopleMF"></div>
       <div class="kpi-grid" id="peopleKpis"></div>
       <div class="chart-grid">
@@ -574,7 +611,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
     <!-- SHELTER -->
     <div id="page-shelter" class="page">
-      <div class="section-title">🏠 Shelter & Maintenance</div>
+      <div class="section-title">🏠 Shelter &amp; Maintenance</div>
       <div class="month-filter" id="shelterMF"></div>
       <div class="kpi-grid" id="shelterKpis"></div>
       <div class="chart-grid">
@@ -593,14 +630,51 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
   <footer class="footer">SAPTAPATHA SUSTAINABILITY TRACKER · 7 PILLARS · 182 VILLAS · Drop a new Excel file or use ✏️ Enter Data any time</footer>
 </div>
 
+
+<!-- ══════ GITHUB SYNC MODAL ══════ -->
+<div class="gh-modal" id="ghModal">
+  <div class="gh-box">
+    <div class="gh-title">☁️ GitHub Sync</div>
+    <div class="gh-sub">Store your data as <code style="color:var(--blue);font-size:10px">data.json</code> in your GitHub repo. Every push creates a versioned commit — your full data history is preserved.</div>
+
+    <div class="gh-field">
+      <label>GitHub Username</label>
+      <input type="text" id="gh_owner" placeholder="e.g. soumik-organo" oninput="ghSaveConfig()">
+    </div>
+    <div class="gh-field">
+      <label>Repository Name</label>
+      <input type="text" id="gh_repo" placeholder="e.g. saptapatha-dashboard" oninput="ghSaveConfig()">
+    </div>
+    <div class="gh-field">
+      <label>Personal Access Token &nbsp;<span style="color:var(--blue);font-size:9px">(saved only in this browser)</span></label>
+      <input type="password" id="gh_token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" oninput="ghSaveConfig()">
+    </div>
+
+    <div class="gh-hint">
+      🔑 <strong>How to create a token:</strong><br>
+      GitHub → <a href="https://github.com/settings/personal-access-tokens/new" target="_blank">Settings → Developer settings → Fine-grained tokens → Generate new token</a><br>
+      → Under "Repository access" select only <strong>saptapatha-dashboard</strong><br>
+      → Under "Permissions → Contents" choose <strong>Read and write</strong> → Generate
+    </div>
+
+    <div id="ghStatus" class="gh-status"></div>
+
+    <div class="gh-actions">
+      <button class="gh-btn gh-btn-cancel" onclick="closeGHModal()">Cancel</button>
+      <button class="gh-btn gh-btn-primary" onclick="ghPull()" style="background:var(--bg3);color:var(--blue);border:1px solid rgba(77,184,255,0.3);">⬇ Pull</button>
+      <button class="gh-btn gh-btn-primary" onclick="ghPush()">⬆ Push to GitHub</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══════ CLEAR DATA MODAL ══════ -->
 <div id="clearModal">
   <div class="clear-modal-box">
     <div class="clear-modal-title">🗑️ Clear Data</div>
     <div class="clear-modal-sub">Choose what to remove. This cannot be undone.</div>
     <div class="clear-checkboxes">
-      <label class="clear-check"><input type="checkbox" id="clr-excel" checked> 📊 Excel data (loaded file)</label>
-      <label class="clear-check"><input type="checkbox" id="clr-manual" checked> ✏️ Manually entered data</label>
+      <label class="clear-check"><input type="checkbox" id="clr-excel" checked=""> 📊 Excel data (loaded file)</label>
+      <label class="clear-check"><input type="checkbox" id="clr-manual" checked=""> ✏️ Manually entered data</label>
     </div>
     <div class="clear-modal-actions">
       <button class="clear-cancel-btn" onclick="closeClearModal()">Cancel</button>
@@ -628,13 +702,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
     </div>
     <!-- Pillar tabs -->
     <div class="drawer-pillar-tabs" id="drawerPillarTabs">
-      <button class="dp-tab active" onclick="switchDrawerTab('energy',this)">⚡ Energy</button>
-      <button class="dp-tab" onclick="switchDrawerTab('water',this)">💧 Water</button>
-      <button class="dp-tab" onclick="switchDrawerTab('food',this)">🌱 Food</button>
-      <button class="dp-tab" onclick="switchDrawerTab('earth',this)">🌍 Earth</button>
-      <button class="dp-tab" onclick="switchDrawerTab('air',this)">💨 Air</button>
-      <button class="dp-tab" onclick="switchDrawerTab('people',this)">👥 People</button>
-      <button class="dp-tab" onclick="switchDrawerTab('shelter',this)">🏠 Shelter</button>
+      <button class="dp-tab active" onclick="switchDrawerTab(&#39;energy&#39;,this)">⚡ Energy</button>
+      <button class="dp-tab" onclick="switchDrawerTab(&#39;water&#39;,this)">💧 Water</button>
+      <button class="dp-tab" onclick="switchDrawerTab(&#39;food&#39;,this)">🌱 Food</button>
+      <button class="dp-tab" onclick="switchDrawerTab(&#39;earth&#39;,this)">🌍 Earth</button>
+      <button class="dp-tab" onclick="switchDrawerTab(&#39;air&#39;,this)">💨 Air</button>
+      <button class="dp-tab" onclick="switchDrawerTab(&#39;people&#39;,this)">👥 People</button>
+      <button class="dp-tab" onclick="switchDrawerTab(&#39;shelter&#39;,this)">🏠 Shelter</button>
     </div>
   </div>
 
@@ -727,7 +801,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
             <tr><td>Rurban Hive</td><td><input type="number" class="mini-num" id="f_wc_rhive_p" placeholder="0" oninput="updateWaterConsumCalc()"></td><td><input type="number" class="mini-num" id="f_wc_rhive_a" placeholder="0" oninput="updateWaterConsumCalc()"></td><td class="var-cell" id="wc_rhive_v">—</td></tr>
             <tr><td>GOO</td><td><input type="number" class="mini-num" id="f_wc_goo_p" placeholder="0" oninput="updateWaterConsumCalc()"></td><td><input type="number" class="mini-num" id="f_wc_goo_a" placeholder="0" oninput="updateWaterConsumCalc()"></td><td class="var-cell" id="wc_goo_v">—</td></tr>
             <tr><td>Swimming Pool</td><td><input type="number" class="mini-num" id="f_wc_pool_p" placeholder="0" oninput="updateWaterConsumCalc()"></td><td><input type="number" class="mini-num" id="f_wc_pool_a" placeholder="0" oninput="updateWaterConsumCalc()"></td><td class="var-cell" id="wc_pool_v">—</td></tr>
-            <tr><td>Landscaping & Farming</td><td><input type="number" class="mini-num" id="f_wc_land_p" placeholder="0" oninput="updateWaterConsumCalc()"></td><td><input type="number" class="mini-num" id="f_wc_land_a" placeholder="0" oninput="updateWaterConsumCalc()"></td><td class="var-cell" id="wc_land_v">—</td></tr>
+            <tr><td>Landscaping &amp; Farming</td><td><input type="number" class="mini-num" id="f_wc_land_p" placeholder="0" oninput="updateWaterConsumCalc()"></td><td><input type="number" class="mini-num" id="f_wc_land_a" placeholder="0" oninput="updateWaterConsumCalc()"></td><td class="var-cell" id="wc_land_v">—</td></tr>
           </tbody>
         </table>
         <div class="computed-row" id="waterConsumCalc"></div>
@@ -796,7 +870,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
       </div>
 
       <div class="field-group">
-        <div class="field-group-title">Cover & Status</div>
+        <div class="field-group-title">Cover &amp; Status</div>
         <div class="field-row">
           <div class="field"><label>Green Cover %</label><input type="number" id="f_greencover" placeholder="0" min="0" max="100"></div>
           <div class="field"><label>Status</label>
@@ -862,7 +936,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
         </div>
       </div>
       <div class="field-group">
-        <div class="field-group-title">Footfall & Events</div>
+        <div class="field-group-title">Footfall &amp; Events</div>
         <div class="field-row">
           <div class="field"><label>Planned Footfall</label><input type="number" id="f_plan_ft" placeholder="0"></div>
           <div class="field"><label>Actual Footfall</label><input type="number" id="f_act_ft" placeholder="0"></div>
@@ -945,6 +1019,183 @@ async function loadFromStorage() {
     const r = await window.storage.get('saptapatha-entries');
     if (r && r.value) { manualEntries = JSON.parse(r.value) || []; }
   } catch(e){}
+}
+
+// ════════════════════════════════════
+//  EXPORT / IMPORT JSON
+// ════════════════════════════════════
+function exportJSON(){
+  const payload={
+    version:1,
+    exportedAt:new Date().toISOString(),
+    manualEntries
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`saptapatha-data-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('⬇️ Data exported as JSON');
+}
+
+function importJSON(input){
+  const file=input.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    try{
+      const parsed=JSON.parse(e.target.result);
+      const entries=parsed.manualEntries||parsed; // support both wrapped and raw array
+      if(!Array.isArray(entries)) throw new Error('Invalid format');
+      // Merge: imported entries take priority for their months
+      const importMonths=new Set(entries.map(e=>e.month));
+      manualEntries=[...manualEntries.filter(e=>!importMonths.has(e.month)),...entries];
+      manualEntries.sort((a,b)=>a.month.localeCompare(b.month));
+      await saveToStorage();
+      rebuildDFromManual();
+      mergeAndRender(document.getElementById('fileBadge').textContent||'Manual Data');
+      renderSavedEntriesList();
+      refreshMonthSelects();
+      toast(`✅ Imported ${entries.length} entries`);
+    }catch(err){
+      toast('❌ Import failed: '+err.message,true);
+    }
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
+// ════════════════════════════════════
+//  GITHUB SYNC
+// ════════════════════════════════════
+const GH_FILE = 'data.json';
+
+function ghLoadConfig(){
+  try{
+    const cfg=JSON.parse(localStorage.getItem('gh_config')||'{}');
+    if(cfg.owner) document.getElementById('gh_owner').value=cfg.owner;
+    if(cfg.repo)  document.getElementById('gh_repo').value=cfg.repo;
+    if(cfg.token) document.getElementById('gh_token').value=cfg.token;
+  }catch(e){}
+}
+function ghSaveConfig(){
+  const cfg={
+    owner:document.getElementById('gh_owner').value.trim(),
+    repo: document.getElementById('gh_repo').value.trim(),
+    token:document.getElementById('gh_token').value.trim()
+  };
+  try{ localStorage.setItem('gh_config',JSON.stringify(cfg)); }catch(e){}
+}
+function ghGetConfig(){
+  return{
+    owner:document.getElementById('gh_owner').value.trim(),
+    repo: document.getElementById('gh_repo').value.trim(),
+    token:document.getElementById('gh_token').value.trim()
+  };
+}
+
+function openGHModal(){
+  ghLoadConfig();
+  document.getElementById('ghModal').classList.add('show');
+  ghSetStatus('','');
+}
+function closeGHModal(){
+  document.getElementById('ghModal').classList.remove('show');
+}
+
+function ghSetStatus(msg,type){
+  const el=document.getElementById('ghStatus');
+  el.textContent=msg;
+  el.className='gh-status'+(msg?' show':'')+' '+(type||'');
+}
+
+async function ghPush(){
+  const {owner,repo,token}=ghGetConfig();
+  if(!owner||!repo||!token){ghSetStatus('⚠️ Fill in all three fields first','err');return;}
+
+  ghSetStatus('⬆ Pushing to GitHub…','loading');
+
+  const payload=JSON.stringify({
+    version:1,
+    pushedAt:new Date().toISOString(),
+    manualEntries
+  },null,2);
+  const content=btoa(unescape(encodeURIComponent(payload))); // base64 UTF-8 safe
+
+  const apiUrl=`https://api.github.com/repos/${owner}/${repo}/contents/${GH_FILE}`;
+  const headers={'Authorization':'Bearer '+token,'Content-Type':'application/json','Accept':'application/vnd.github+json'};
+
+  try{
+    // Try to get current SHA (needed to update existing file)
+    let sha=null;
+    const getRes=await fetch(apiUrl,{headers});
+    if(getRes.ok){
+      const existing=await getRes.json();
+      sha=existing.sha;
+    } else if(getRes.status!==404){
+      throw new Error(`GitHub API error ${getRes.status}: ${(await getRes.json()).message||''}`);
+    }
+
+    const body={
+      message:`saptapatha: data update ${new Date().toISOString().slice(0,16).replace('T',' ')}`,
+      content,
+      ...(sha?{sha}:{})
+    };
+
+    const putRes=await fetch(apiUrl,{method:'PUT',headers,body:JSON.stringify(body)});
+    const putData=await putRes.json();
+    if(!putRes.ok) throw new Error(putData.message||`HTTP ${putRes.status}`);
+
+    ghSetStatus(`✅ Pushed successfully! Commit: ${putData.commit?.sha?.slice(0,7)}  ·  ${new Date().toLocaleTimeString()}`,'ok');
+    document.getElementById('ghBtn').classList.add('synced');
+    document.getElementById('ghBtn').textContent='✅ GitHub';
+    setTimeout(()=>{
+      document.getElementById('ghBtn').classList.remove('synced');
+      document.getElementById('ghBtn').textContent='☁️ GitHub';
+    },4000);
+    toast('☁️ Saved to GitHub!');
+  }catch(err){
+    ghSetStatus('❌ Push failed: '+err.message,'err');
+    toast('❌ GitHub push failed',true);
+  }
+}
+
+async function ghPull(){
+  const {owner,repo,token}=ghGetConfig();
+  if(!owner||!repo||!token){ghSetStatus('⚠️ Fill in all three fields first','err');return;}
+
+  ghSetStatus('⬇ Pulling from GitHub…','loading');
+
+  const apiUrl=`https://api.github.com/repos/${owner}/${repo}/contents/${GH_FILE}`;
+  const headers={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json'};
+
+  try{
+    const res=await fetch(apiUrl,{headers});
+    if(res.status===404){ghSetStatus('⚠️ No data.json found — push first to create it','err');return;}
+    if(!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.json()).message||''}`);
+
+    const data=await res.json();
+    const decoded=decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
+    const parsed=JSON.parse(decoded);
+    const entries=parsed.manualEntries||parsed;
+    if(!Array.isArray(entries)) throw new Error('Invalid data format in repo');
+
+    // Merge: pulled entries overwrite existing for same months
+    const pullMonths=new Set(entries.map(e=>e.month));
+    manualEntries=[...manualEntries.filter(e=>!pullMonths.has(e.month)),...entries];
+    manualEntries.sort((a,b)=>a.month.localeCompare(b.month));
+    await saveToStorage();
+    rebuildDFromManual();
+    mergeAndRender(document.getElementById('fileBadge').textContent||'Manual Data');
+    renderSavedEntriesList();
+    refreshMonthSelects();
+
+    ghSetStatus(`✅ Pulled ${entries.length} entries  ·  last pushed ${parsed.pushedAt?.slice(0,16)||'unknown'}`,'ok');
+    toast(`☁️ Pulled ${entries.length} entries from GitHub`);
+  }catch(err){
+    ghSetStatus('❌ Pull failed: '+err.message,'err');
+    toast('❌ GitHub pull failed',true);
+  }
 }
 
 // ════════════════════════════════════
@@ -1363,6 +1614,9 @@ async function confirmClearData(){
 // Close modal on backdrop click
 document.getElementById('clearModal').addEventListener('click',function(e){
   if(e.target===this) closeClearModal();
+});
+document.getElementById('ghModal').addEventListener('click',function(e){
+  if(e.target===this) closeGHModal();
 });
 
 function openDrawer(){
@@ -2397,5 +2651,6 @@ function toast(msg,err=false){
   toastTimer=setTimeout(()=>el.classList.remove('show'),3000);
 }
 </script>
-</body>
-</html>
+
+
+</body></html>
