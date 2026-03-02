@@ -1587,6 +1587,31 @@ async function ghPull(){
 }
 
 // ════════════════════════════════════
+//  AUTO-LOAD FROM PUBLIC REPO
+// ════════════════════════════════════
+async function autoLoadPublicData(){
+  const RAW='https://raw.githubusercontent.com/soumik-organo/saptapatha-dashboard/main/data.json';
+  try{
+    const res=await fetch(RAW+'?t='+Date.now());
+    if(!res.ok) return;
+    const parsed=await res.json();
+    const entries=Array.isArray(parsed.manualEntries)?parsed.manualEntries:(Array.isArray(parsed)?parsed:[]);
+    if(!entries.length) return;
+    const repoPushedAt=parsed.pushedAt||'';
+    const lastLoaded=localStorage.getItem('saptapatha-auto-loaded')||'';
+    if(repoPushedAt && repoPushedAt<=lastLoaded) return;
+    manualEntries=[...entries];
+    manualEntries.sort((a,b)=>a.month.localeCompare(b.month));
+    await saveToStorage();
+    if(repoPushedAt) localStorage.setItem('saptapatha-auto-loaded',repoPushedAt);
+    rebuildDFromManual();
+    mergeAndRender('Saptapatha Dashboard');
+    renderSavedEntriesList();
+    refreshMonthSelects();
+  }catch(e){}
+}
+
+// ════════════════════════════════════
 //  INIT
 // ════════════════════════════════════
 (async () => {
@@ -1594,6 +1619,7 @@ async function ghPull(){
   if (manualEntries.length > 0) {
     mergeAndRender('Saved Data');
   }
+  await autoLoadPublicData();
 })();
 
 // ════════════════════════════════════
