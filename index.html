@@ -1621,7 +1621,7 @@ function handleFile(file) {
     try{
       // cellDates:false keeps date serial numbers as plain numbers — avoids Date objects corrupting num()
       const wb=XLSX.read(e.target.result,{type:'array',cellDates:false,cellNF:false,cellStyles:false});
-      const xlData=parseWorkbook(wb);
+      const xlData=parseWorkbook(wb,file.name);
       mergeExcelData(xlData);
       mergeAndRender(file.name);
       document.getElementById('loadingScreen').classList.remove('show');
@@ -1684,34 +1684,64 @@ function isNewTemplate(wb){
   });
 }
 
-function parseNewTemplate(wb){
+function parseNewTemplate(wb,filename){
   var out={energy:[],water:[],food:[],earth:[],air:[],people:[],shelter:[],
            energyCluster:[],energyDaily:[],waterConsumption:[],waterQuality:[],
            peopleAmenities:[],peopleHealthLounge:[],peoplePersonalSvc:[],peopleSocial:[],
            peopleQuality:[],peopleSecurity:[],peopleInternet:[],peopleUpskilling:[],peopleInitiatives:[],
            shelterCommunity:[],shelterMaintenance:[],shelterCivil:[],shelterLandscape:[],shelterPest:[]};
 
-  // ── MONTH: extract YYYY-MM from any cell in Instructions sheet, convert to Mon-YYYY ──
+  // ── MONTH DETECTION (3-tier priority) ────────────────────────────────────────
+  // Tier 1: exact YYYY-MM string or date serial in Instructions sheet
+  // Tier 2: month name in filename  (e.g. "February Saptapatha data entry.xlsx")
+  // Tier 3: YYYY-MM embedded anywhere in Instructions sheet text (last resort)
   var month='';
-  var instrSn=wb.SheetNames.find(function(n){return n.includes('Instruction')||n.includes('\uD83D\uDCCB');});
-  if(instrSn){
-    var iRaw=XLSX.utils.sheet_to_json(wb.Sheets[instrSn],{defval:null,raw:true,header:1});
-    outer: for(var ii=0;ii<Math.min(35,iRaw.length);ii++){
-      var row=iRaw[ii]||[];
-      for(var jj=0;jj<row.length;jj++){
-        if(row[jj]==null)continue;
-        var s=String(row[jj]).trim();
-        var m2=s.match(/(\d{4}-\d{2})/);
-        if(m2){month=m2[1];break outer;}
-      }
-    }
-  }
   function yymm2MonYear(yyyymm){
     var parts=yyyymm.split('-');
     var y=parseInt(parts[0]),mo=parseInt(parts[1]);
     var mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     return mn[mo-1]+'-'+y;
   }
+  var instrSn=wb.SheetNames.find(function(n){return n.includes('Instruction')||n.includes('\uD83D\uDCCB');});
+  var iRaw=instrSn?XLSX.utils.sheet_to_json(wb.Sheets[instrSn],{defval:null,raw:true,header:1}):[];
+
+  // Tier 1 – standalone YYYY-MM value or date serial
+  outer1: for(var ii=0;ii<Math.min(35,iRaw.length);ii++){
+    var row=iRaw[ii]||[];
+    for(var jj=0;jj<row.length;jj++){
+      var v=row[jj]; if(v==null)continue;
+      if(typeof v==='string'&&v.trim().match(/^\d{4}-\d{2}$/)){month=v.trim();break outer1;}
+      if(typeof v==='number'&&v>40000&&v<60000){
+        var d=new Date(Math.round((v-25569)*86400*1000));
+        var mo=d.getUTCMonth()+1;
+        month=d.getUTCFullYear()+'-'+(mo<10?'0'+mo:mo);
+        break outer1;
+      }
+    }
+  }
+
+  // Tier 2 – month name in filename
+  if(!month&&filename){
+    var mmap={january:'01',february:'02',march:'03',april:'04',may:'05',june:'06',
+              july:'07',august:'08',september:'09',october:'10',november:'11',december:'12'};
+    var fn=filename.toLowerCase();
+    var yrM=fn.match(/20\d{2}/);
+    var yr=yrM?yrM[0]:String(new Date().getFullYear());
+    for(var mn2 in mmap){if(fn.includes(mn2)){month=yr+'-'+mmap[mn2];break;}}
+  }
+
+  // Tier 3 – YYYY-MM embedded anywhere in Instructions sheet text
+  if(!month){
+    outer3: for(var ii=0;ii<Math.min(35,iRaw.length);ii++){
+      var row=iRaw[ii]||[];
+      for(var jj=0;jj<row.length;jj++){
+        if(row[jj]==null)continue;
+        var m3=String(row[jj]).trim().match(/(\d{4}-\d{2})/);
+        if(m3){month=m3[1];break outer3;}
+      }
+    }
+  }
+
   if(month)month=yymm2MonYear(month);
 
   // ── ENERGY ──
@@ -2090,8 +2120,8 @@ function parseNewTemplate(wb){
   return out;
 }
 
-function parseWorkbook(wb){
-  if(isNewTemplate(wb))return parseNewTemplate(wb);
+function parseWorkbook(wb,filename){
+  if(isNewTemplate(wb))return parseNewTemplate(wb,filename);
   const out={energy:[],water:[],food:[],earth:[],air:[],people:[],shelter:[],
              energyCluster:[],energyDaily:[],waterConsumption:[],waterQuality:[]};
 
