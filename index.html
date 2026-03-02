@@ -1053,7 +1053,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
         </div>
         <div class="field-group-title" style="margin-top:14px">Additional Readings</div>
         <div class="field-row triple">
-          <div class="field"><label>Avg PM10</label><input type="number" id="f_pm10" placeholder="0"></div>
+          <div class="field"><label>Avg PM10 (µg/m³)</label><input type="number" id="f_pm10" placeholder="0"></div>
           <div class="field"><label>Avg CO2 (ppm)</label><input type="number" id="f_co2" placeholder="0"></div>
           <div class="field"><label>Status</label>
             <select id="f_air_status"><option value="">Auto</option><option value="Green">🟢 Green</option><option value="Amber">🟡 Amber</option><option value="Red">🔴 Red</option></select>
@@ -1675,7 +1675,423 @@ function parseSheet(wb, sheetCandidates, monthColHint='month') {
   return{raw,headers,hRow,ci};
 }
 
+// ════════════════════════════════════
+//  NEW TEMPLATE DETECTOR & PARSER
+// ════════════════════════════════════
+function isNewTemplate(wb){
+  return wb.SheetNames.some(function(n){
+    return n.includes('(OFM)')||n.includes('Farming and Landscapin')||n.includes('Sridhar');
+  });
+}
+
+function parseNewTemplate(wb){
+  var out={energy:[],water:[],food:[],earth:[],air:[],people:[],shelter:[],
+           energyCluster:[],energyDaily:[],waterConsumption:[],waterQuality:[],
+           peopleAmenities:[],peopleHealthLounge:[],peoplePersonalSvc:[],peopleSocial:[],
+           peopleQuality:[],peopleSecurity:[],peopleInternet:[],peopleUpskilling:[],peopleInitiatives:[],
+           shelterCommunity:[],shelterMaintenance:[],shelterCivil:[],shelterLandscape:[],shelterPest:[]};
+
+  // ── MONTH: extract YYYY-MM from any cell in Instructions sheet, convert to Mon-YYYY ──
+  var month='';
+  var instrSn=wb.SheetNames.find(function(n){return n.includes('Instruction')||n.includes('\uD83D\uDCCB');});
+  if(instrSn){
+    var iRaw=XLSX.utils.sheet_to_json(wb.Sheets[instrSn],{defval:null,raw:true,header:1});
+    outer: for(var ii=0;ii<Math.min(35,iRaw.length);ii++){
+      var row=iRaw[ii]||[];
+      for(var jj=0;jj<row.length;jj++){
+        if(row[jj]==null)continue;
+        var s=String(row[jj]).trim();
+        var m2=s.match(/(\d{4}-\d{2})/);
+        if(m2){month=m2[1];break outer;}
+      }
+    }
+  }
+  function yymm2MonYear(yyyymm){
+    var parts=yyyymm.split('-');
+    var y=parseInt(parts[0]),mo=parseInt(parts[1]);
+    var mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return mn[mo-1]+'-'+y;
+  }
+  if(month)month=yymm2MonYear(month);
+
+  // ── ENERGY ──
+  var eSn=wb.SheetNames.find(function(n){return n.includes('Energy');});
+  if(eSn){
+    var eRaw=XLSX.utils.sheet_to_json(wb.Sheets[eSn],{defval:null,raw:true,header:1});
+    var solar=null,eb=null,dg=null,total=null,villas=null,common=null,estatus='';
+    var inSummary=false;
+    for(var i=0;i<eRaw.length;i++){
+      var r=eRaw[i]; if(!r)continue;
+      var a=str(r[0]).toLowerCase();
+      if(a.includes('source')||a.includes('metric'))inSummary=true;
+      if(!inSummary)continue;
+      if(a.includes('solar'))solar=num(r[1]);
+      else if((a.includes('eb')||a.includes('grid'))&&!a.includes('total'))eb=num(r[1]);
+      else if(a.includes(' dg ')&&a.includes('kwh'))dg=num(r[1]);
+      else if(a.startsWith('dg'))dg=num(r[1]);
+      else if(a.includes('total')&&a.includes('kwh'))total=num(r[1]);
+      else if(a.includes('villas'))villas=num(r[1]);
+      else if(a.includes('common'))common=num(r[1]);
+      else if(a.includes('status'))estatus=str(r[1]);
+    }
+    if(month)out.energy.push({month:month,solar:solar,eb:eb,dg:dg,total:total,villas:villas,common:common,status:estatus,_src:'excel'});
+
+    // Cluster table: rows where col A exactly matches a cluster abbreviation
+    var clusterNames=['RP','MRP','GP','VP','MDP','CP','CHP','SP','TP'];
+    var clusterObj={month:month,_src:'excel'};
+    var foundCluster=false;
+    for(var i=0;i<eRaw.length;i++){
+      var r=eRaw[i]; if(!r)continue;
+      var a=str(r[0]).trim().toUpperCase();
+      if(clusterNames.indexOf(a)>=0){clusterObj[a]=num(r[1]);foundCluster=true;}
+    }
+    if(foundCluster&&month)out.energyCluster.push(clusterObj);
+
+    // Daily power: wide table with repeated "Day" / kWh column pairs
+    var dailyHdrRow=-1;
+    for(var i=0;i<eRaw.length;i++){
+      var r=eRaw[i]; if(!r)continue;
+      var dayCount=r.filter(function(v){return str(v).toLowerCase()==='day';}).length;
+      if(dayCount>=2){dailyHdrRow=i;break;}
+    }
+    if(dailyHdrRow>=0){
+      for(var i=dailyHdrRow+1;i<eRaw.length;i++){
+        var r=eRaw[i]; if(!r)continue;
+        for(var c=0;c<r.length;c+=2){
+          var d=num(r[c]);
+          if(d!=null&&Number.isInteger(d)&&d>=1&&d<=31){
+            out.energyDaily.push({day:d,solar:num(r[c+1]),eb:null,_src:'excel'});
+          }
+        }
+      }
+    }
+  }
+
+  // ── WATER ──
+  var wSn=wb.SheetNames.find(function(n){return n.includes('Water');});
+  if(wSn){
+    var wRaw=XLSX.utils.sheet_to_json(wb.Sheets[wSn],{defval:null,raw:true,header:1});
+    var dw1=null,borewell=null,dw2=null,mb=null,wtotal=null,wstatus='';
+    for(var i=0;i<wRaw.length;i++){
+      var r=wRaw[i]; if(!r)continue;
+      var a=str(r[0]).toLowerCase();
+      if(a.includes('dug well 1')||a.includes('dugwell1'))dw1=num(r[1]);
+      else if(a.includes('dug well 2')||a.includes('dugwell2'))dw2=num(r[1]);
+      else if(a.includes('borewell'))borewell=num(r[1]);
+      else if(a.includes('mission'))mb=num(r[1]);
+      else if(a.includes('total water')||(a.includes('total')&&a.includes('in')))wtotal=num(r[1]);
+      else if(a.includes('status')&&!wstatus)wstatus=str(r[1]);
+    }
+    if(month)out.water.push({month:month,borewell:borewell,dugWell1:dw1,dugWell2:dw2,missionBhag:mb,total:wtotal,status:wstatus,_src:'excel'});
+
+    // Consumption balance sheet: find header row containing "planned" + "actual"
+    var consumHdrRow=-1;
+    for(var i=0;i<wRaw.length;i++){
+      var r=wRaw[i]; if(!r)continue;
+      var vals=r.map(function(v){return str(v).toLowerCase();});
+      if(vals.some(function(v){return v==='planned (kl)'||v==='planned';})&&
+         vals.some(function(v){return v==='actual (kl)'||v==='actual';})){consumHdrRow=i;break;}
+    }
+    if(consumHdrRow<0){
+      for(var i=0;i<wRaw.length;i++){
+        var r=wRaw[i]; if(!r)continue;
+        if(str(r[0]).toLowerCase().includes('consumption balance')){consumHdrRow=i+1;break;}
+      }
+    }
+    if(consumHdrRow>=0){
+      for(var i=consumHdrRow+1;i<wRaw.length;i++){
+        var r=wRaw[i]; if(!r)continue;
+        var a=str(r[0]);
+        if(!a||a.toLowerCase().includes('total')||a.toLowerCase().includes('status'))break;
+        var planned=num(r[1]),actual=num(r[2]);
+        if(planned!=null||actual!=null){
+          out.waterConsumption.push({month:month,category:a,planned:planned,actual:actual,
+            variance:planned!=null&&actual!=null?actual-planned:null,_src:'excel'});
+        }
+      }
+    }
+
+    // Water quality: header row with pH + TDS
+    var qualHdrRow=-1;
+    for(var i=0;i<wRaw.length;i++){
+      var r=wRaw[i]; if(!r)continue;
+      var vals=r.map(function(v){return str(v).toLowerCase();});
+      if(vals.some(function(v){return v.includes('ph');})&&vals.some(function(v){return v.includes('tds');})){qualHdrRow=i;break;}
+    }
+    if(qualHdrRow>=0){
+      for(var i=qualHdrRow+1;i<wRaw.length;i++){
+        var r=wRaw[i]; if(!r)continue;
+        var loc=str(r[0]);
+        if(!loc)break;
+        if(loc.toLowerCase().includes('villa')||loc.toLowerCase().includes('total'))break;
+        var ph=num(r[1]),tds=num(r[2]),turb=num(r[3]),chlor=num(r[4]);
+        if(ph!=null||tds!=null){
+          out.waterQuality.push({month:month,waterType:loc,ph:ph,tds:tds,turbidity:turb,
+            chlorine:chlor,ecoli:str(r[5]),status:str(r[6]),_src:'excel'});
+        }
+      }
+    }
+
+    // Villa-wise table: sum domestic (col O=14) and irrigation (col S=18) per cluster
+    // Header is in col M (index 12) — find row containing "Domestic"
+    var villaHdrRow=-1;
+    for(var i=0;i<wRaw.length;i++){
+      var r=wRaw[i]; if(!r)continue;
+      if(str(r[12]||'').toLowerCase().includes('domestic')){villaHdrRow=i;break;}
+    }
+    var clPfx=['MRP','MDP','CHP','RP','GP','VP','CP','SP','TP']; // longer prefixes first
+    var clDom={},clIrr={};
+    clPfx.forEach(function(p){clDom[p]=0;clIrr[p]=0;});
+    if(villaHdrRow>=0){
+      for(var i=villaHdrRow+2;i<wRaw.length;i++){
+        var r=wRaw[i]; if(!r)continue;
+        var villa=str(r[12]); if(!villa)continue;
+        var pfx=clPfx.find(function(p){return villa.startsWith(p);});
+        if(pfx){clDom[pfx]+=(num(r[14])||0);clIrr[pfx]+=(num(r[18])||0);}
+      }
+      clPfx.forEach(function(p){
+        if(clDom[p]>0||clIrr[p]>0){
+          out.waterConsumption.push({month:month,category:p+' Domestic (Villa)',actual:clDom[p],_src:'excel'});
+          out.waterConsumption.push({month:month,category:p+' Irrigation (Villa)',actual:clIrr[p],_src:'excel'});
+        }
+      });
+    }
+  }
+
+  // ── FOOD ──
+  var foodSn=wb.SheetNames.find(function(n){return n.includes('Food');});
+  if(foodSn){
+    var fRaw=XLSX.utils.sheet_to_json(wb.Sheets[foodSn],{defval:null,raw:true,header:1});
+    var totalActual=0,totalPlanned=0,families=null,fstatus='';
+    for(var i=0;i<fRaw.length;i++){
+      var r=fRaw[i]; if(!r)continue;
+      var a=str(r[0]),aLo=a.toLowerCase();
+      if(aLo.includes('families')||aLo.includes('served')){families=num(r[1]);continue;}
+      if(aLo.includes('status')){fstatus=str(r[1]);continue;}
+      var n2=num(r[0]);
+      if(n2!=null&&Number.isInteger(n2)&&n2>=1&&n2<=30){
+        totalPlanned+=(num(r[3])||0);
+        totalActual+=(num(r[4])||0);
+      }
+    }
+    if(month)out.food.push({month:month,
+      planned:totalPlanned||null,actual:totalActual||null,
+      variance:totalActual-totalPlanned,families:families,status:fstatus,_src:'excel'});
+  }
+
+  // ── EARTH ──
+  var earthSn=wb.SheetNames.find(function(n){return n.includes('Earth');});
+  if(earthSn){
+    var eaRaw=XLSX.utils.sheet_to_json(wb.Sheets[earthSn],{defval:null,raw:true,header:1});
+    var wTypes=['Organic','Plastic','E-Waste','Construction','Paper','Glass'];
+    var earthStatus='';
+    for(var i=0;i<eaRaw.length;i++){
+      var r=eaRaw[i]; if(!r)continue;
+      var a=str(r[0]),aLo=a.toLowerCase();
+      var clean=aLo.replace(/[^\w\s\-]/g,'').trim();
+      var wt=wTypes.find(function(w){return clean.includes(w.toLowerCase());});
+      if(wt){
+        var produced=num(r[1]),reused=num(r[2]),processed=num(r[3]),residue=num(r[4]);
+        var reuseP=produced>0&&reused!=null?Math.round((reused/produced)*100):null;
+        out.earth.push({month:month,wasteType:wt,produced:produced,reused:reused,processed:processed,residue:residue,reuseP:reuseP,status:'',_src:'excel'});
+        continue;
+      }
+      if(aLo.includes('status'))earthStatus=str(r[1]);
+    }
+    if(out.earth.length===0&&month)
+      out.earth.push({month:month,wasteType:'Total',produced:null,reused:null,processed:null,residue:null,reuseP:null,status:earthStatus,_src:'excel'});
+  }
+
+  // ── AIR ──
+  var airSn=wb.SheetNames.find(function(n){return n.includes('Air');});
+  if(airSn){
+    var airRaw=XLSX.utils.sheet_to_json(wb.Sheets[airSn],{defval:null,raw:true,header:1});
+    var pmW=[null,null,null,null],pmAvg=null;
+    var aqiW=[null,null,null,null],aqiAvg=null;
+    var pm10=null,co2=null,location='',airstatus='';
+    for(var i=0;i<airRaw.length;i++){
+      var r=airRaw[i]; if(!r)continue;
+      var a=str(r[0]).toLowerCase();
+      if(a.includes('pm2.5')||a.includes('pm25')){
+        pmW=[num(r[1]),num(r[2]),num(r[3]),num(r[4])];pmAvg=num(r[5]);
+      } else if((a==='aqi'||a.startsWith('aqi'))&&!a.includes('pm')){
+        aqiW=[num(r[1]),num(r[2]),num(r[3]),num(r[4])];aqiAvg=num(r[5]);
+      } else if(a.includes('pm10'))pm10=num(r[1]);
+      else if(a.includes('co2')||a.includes('co\u2082'))co2=num(r[1]);
+      else if(a.includes('location'))location=str(r[1]);
+      else if(a.includes('status'))airstatus=str(r[1]);
+    }
+    if(month)out.air.push({month:month,
+      pm25:pmAvg,pmW1:pmW[0],pmW2:pmW[1],pmW3:pmW[2],pmW4:pmW[3],
+      pm10:pm10,
+      aqi:aqiAvg,aqiW1:aqiW[0],aqiW2:aqiW[1],aqiW3:aqiW[2],aqiW4:aqiW[3],
+      co2:co2,location:location,status:airstatus,_src:'excel'});
+  }
+
+  // ── PEOPLE ──
+  var peopleSn=wb.SheetNames.find(function(n){return n.includes('People');});
+  if(peopleSn){
+    var pRaw=XLSX.utils.sheet_to_json(wb.Sheets[peopleSn],{defval:null,raw:true,header:1});
+    var ptotal=null,poccupied=null,plannedFF=null,actualFF=null,events=null,pstatus='';
+    for(var i=0;i<pRaw.length;i++){
+      var r=pRaw[i]; if(!r)continue;
+      var a=str(r[0]).toLowerCase();
+      if(a.includes('total villas'))ptotal=num(r[1]);
+      else if(a.includes('occupied'))poccupied=num(r[1]);
+      else if(a.includes('planned footfall'))plannedFF=num(r[1]);
+      else if(a.includes('actual footfall'))actualFF=num(r[1]);
+      else if(a.includes('events'))events=num(r[1]);
+      else if(a.includes('status')&&!pstatus)pstatus=str(r[1]);
+    }
+    var occ=ptotal>0&&poccupied!=null?(poccupied/ptotal)*100:null;
+    if(month)out.people.push({month:month,total:ptotal,occupied:poccupied,occupancyPct:occ,
+      plannedFootfall:plannedFF,actualFootfall:actualFF,events:events,status:pstatus,_src:'excel'});
+
+    // Generic section finder: returns index of first data row (after column header row)
+    function peopleSec(keyword){
+      for(var i=0;i<pRaw.length;i++){
+        var r=pRaw[i]; if(!r)continue;
+        if(!str(r[0]).toLowerCase().includes(keyword))continue;
+        for(var j=i+1;j<Math.min(i+4,pRaw.length);j++){
+          var rj=pRaw[j];
+          if(rj&&rj.filter(function(v){return v!=null;}).length>=3)return j+1;
+        }
+      }
+      return -1;
+    }
+    function peopleRows(startRow,stopKeyword){
+      var result=[];
+      for(var i=startRow;i<pRaw.length;i++){
+        var r=pRaw[i]; if(!r)continue;
+        var a=str(r[0]); if(!a)continue;
+        if(stopKeyword&&a.toLowerCase().includes(stopKeyword))break;
+        result.push(r);
+      }
+      return result;
+    }
+
+    var amenStart=peopleSec('amenity ppm');
+    if(amenStart>=0)peopleRows(amenStart,'health lounge').forEach(function(r){
+      var a=str(r[0]); if(!a)return;
+      out.peopleAmenities.push({month:month,area:a,plannedChecks:num(r[1]),actualChecks:num(r[2]),issuesFound:num(r[3]),resolved:num(r[4]),status:str(r[5]),_src:'excel'});
+    });
+
+    var hlStart=peopleSec('health lounge');
+    if(hlStart>=0)peopleRows(hlStart,'personal services').forEach(function(r){
+      var a=str(r[0]); if(!a)return;
+      out.peopleHealthLounge.push({month:month,serviceType:a,plannedSessions:num(r[1]),actualSessions:num(r[2]),participants:num(r[3]),satisfactionPct:num(r[4]),status:str(r[5]),_src:'excel'});
+    });
+
+    var psStart=peopleSec('personal services');
+    if(psStart>=0)peopleRows(psStart,'social engagement').forEach(function(r){
+      var a=str(r[0]); if(!a)return;
+      out.peoplePersonalSvc.push({month:month,serviceType:a,plannedBookings:num(r[1]),actualBookings:num(r[2]),avgDuration:num(r[3]),satisfactionPct:num(r[4]),status:str(r[5]),_src:'excel'});
+    });
+
+    var seStart=peopleSec('social engagement');
+    if(seStart>=0)peopleRows(seStart,'quality report').forEach(function(r){
+      var a=str(r[0]); if(!a)return;
+      out.peopleSocial.push({month:month,eventType:a,plannedEvents:num(r[1]),actualEvents:num(r[2]),attendance:num(r[3]),targetAttendance:num(r[4]),status:str(r[5]),_src:'excel'});
+    });
+
+    var qrStart=peopleSec('quality report');
+    if(qrStart>=0)peopleRows(qrStart,'security').forEach(function(r){
+      var a=str(r[0]); if(!a)return;
+      out.peopleQuality.push({month:month,serviceCategory:a,qualityScore:num(r[1]),complaints:num(r[2]),resolved:num(r[3]),status:str(r[4]),_src:'excel'});
+    });
+
+    var secStart=peopleSec('security');
+    if(secStart>=0)peopleRows(secStart,'internet').forEach(function(r){
+      var a=str(r[0]); if(!a)return;
+      out.peopleSecurity.push({month:month,metric:a,target:num(r[1]),actual:num(r[2]),incidents:num(r[3]),responseTime:num(r[4]),status:str(r[5]),_src:'excel'});
+    });
+
+    var netStart=peopleSec('internet');
+    if(netStart>=0)peopleRows(netStart,'upskilling').forEach(function(r){
+      var a=str(r[0]); if(!a)return;
+      out.peopleInternet.push({month:month,metric:a,target:num(r[1]),actual:num(r[2]),status:str(r[3]),_src:'excel'});
+    });
+
+    var usStart=peopleSec('upskilling');
+    if(usStart>=0)peopleRows(usStart,'initiative').forEach(function(r){
+      var a=str(r[0]); if(!a)return;
+      out.peopleUpskilling.push({month:month,program:a,targetParticipants:num(r[1]),actualParticipants:num(r[2]),trainingHrs:num(r[3]),completionPct:num(r[4]),status:str(r[5]),_src:'excel'});
+    });
+  }
+
+  // ── SHELTER ──
+  var shelterSn=wb.SheetNames.find(function(n){return n.includes('Shelter');});
+  if(shelterSn){
+    var shRaw=XLSX.utils.sheet_to_json(wb.Sheets[shelterSn],{defval:null,raw:true,header:1});
+    var plannedTasks=null,completedTasks=null,sstatus='';
+    for(var i=0;i<shRaw.length;i++){
+      var r=shRaw[i]; if(!r)continue;
+      var a=str(r[0]).toLowerCase();
+      if(a.includes('planned tasks'))plannedTasks=num(r[1]);
+      else if(a.includes('completed tasks'))completedTasks=num(r[1]);
+      else if(a.includes('status')&&!sstatus)sstatus=str(r[1]);
+    }
+    var compPct=plannedTasks>0&&completedTasks!=null?(completedTasks/plannedTasks)*100:null;
+    if(month)out.shelter.push({month:month,planned:plannedTasks,completed:completedTasks,completionPct:compPct,status:sstatus,_src:'excel'});
+
+    function shelterSec(keyword){
+      for(var i=0;i<shRaw.length;i++){
+        var r=shRaw[i]; if(!r)continue;
+        if(!str(r[0]).toLowerCase().includes(keyword))continue;
+        for(var j=i+1;j<Math.min(i+4,shRaw.length);j++){
+          var rj=shRaw[j];
+          if(rj&&rj.filter(function(v){return v!=null;}).length>=3)return j+1;
+        }
+      }
+      return -1;
+    }
+    function shelterRows(startRow,stopKeyword){
+      var result=[];
+      for(var i=startRow;i<shRaw.length;i++){
+        var r=shRaw[i]; if(!r)continue;
+        var a=str(r[0]); if(!a)continue;
+        if(stopKeyword&&a.toLowerCase().includes(stopKeyword))break;
+        result.push(r);
+      }
+      return result;
+    }
+
+    var caStart=shelterSec('community area');
+    if(caStart>=0)shelterRows(caStart,'ofm maintenance').forEach(function(r){
+      var a=str(r[0]); if(!a)return;
+      out.shelterCommunity.push({month:month,area:a,plannedHrs:num(r[1]),actualHrs:num(r[2]),peakTimes:str(r[3]),status:str(r[4]),_src:'excel'});
+    });
+
+    var maintStart=shelterSec('ofm maintenance');
+    if(maintStart>=0)shelterRows(maintStart,'civil ppm').forEach(function(r){
+      var a=str(r[0]); if(!a)return;
+      out.shelterMaintenance.push({month:month,system:a,plannedTasks:num(r[1]),completedTasks:num(r[2]),plannedCost:num(r[3]),actualCost:num(r[4]),status:str(r[5]),_src:'excel'});
+    });
+
+    var civStart=shelterSec('civil ppm');
+    if(civStart>=0)shelterRows(civStart,'landscape ppm').forEach(function(r){
+      var a=str(r[0]); if(!a)return;
+      out.shelterCivil.push({month:month,infrastructure:a,plannedChecks:num(r[1]),actualChecks:num(r[2]),issuesFound:num(r[3]),resolved:num(r[4]),status:str(r[5]),_src:'excel'});
+    });
+
+    var lsStart=shelterSec('landscape ppm');
+    if(lsStart>=0)shelterRows(lsStart,'pest control').forEach(function(r){
+      var a=str(r[0]); if(!a)return;
+      out.shelterLandscape.push({month:month,areaType:a,plannedChecks:num(r[1]),actualChecks:num(r[2]),issuesFound:num(r[3]),resolved:num(r[4]),status:str(r[5]),_src:'excel'});
+    });
+
+    var pestStart=shelterSec('pest control');
+    if(pestStart>=0)shelterRows(pestStart,'').forEach(function(r){
+      var a=str(r[0]); if(!a)return;
+      out.shelterPest.push({month:month,treatmentType:a,plannedTreatments:num(r[1]),actualTreatments:num(r[2]),effectivenessPct:num(r[3]),complaints:num(r[4]),status:str(r[5]),_src:'excel'});
+    });
+  }
+
+  return out;
+}
+
 function parseWorkbook(wb){
+  if(isNewTemplate(wb))return parseNewTemplate(wb);
   const out={energy:[],water:[],food:[],earth:[],air:[],people:[],shelter:[],
              energyCluster:[],energyDaily:[],waterConsumption:[],waterQuality:[]};
 
