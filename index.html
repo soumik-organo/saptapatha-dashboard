@@ -1440,8 +1440,13 @@ document.addEventListener('click',()=>{
 });
 async function captureScreenshot(fmt){
   document.getElementById('imgMenu').style.display='none';
-  toast('📷 Capturing…');
+  toast('📷 Capturing full dashboard…');
   const el=document.getElementById('dashboard');
+  // Scroll to top so html2canvas starts from the beginning
+  const origScroll=window.scrollY;
+  window.scrollTo(0,0);
+  // Wait for scroll and any repaints to settle
+  await new Promise(r=>setTimeout(r,200));
   try{
     const canvas=await html2canvas(el,{
       backgroundColor:'#0b1512',
@@ -1449,8 +1454,15 @@ async function captureScreenshot(fmt){
       useCORS:true,
       logging:false,
       scrollX:0,
-      scrollY:-window.scrollY
+      scrollY:0,
+      x:0,
+      y:0,
+      width:el.offsetWidth,
+      height:el.scrollHeight,
+      windowWidth:window.innerWidth,
+      windowHeight:el.scrollHeight
     });
+    window.scrollTo(0,origScroll);
     const mime=fmt==='jpg'?'image/jpeg':'image/png';
     const ext=fmt==='jpg'?'jpg':'png';
     const url=canvas.toDataURL(mime,fmt==='jpg'?0.92:undefined);
@@ -1463,6 +1475,7 @@ async function captureScreenshot(fmt){
     a.click();
     toast(`✅ Saved as ${ext.toUpperCase()}`);
   }catch(err){
+    window.scrollTo(0,origScroll);
     toast('❌ Screenshot failed: '+err.message,true);
   }
 }
