@@ -1,5 +1,1426 @@
 {
   "version": 1,
-  "pushedAt": "2026-03-02T09:49:01.467Z",
-  "manualEntries": []
+  "pushedAt": "2026-03-02T10:04:22.706Z",
+  "manualEntries": [],
+  "excelData": {
+    "energy": [
+      {
+        "month": "Feb-2026",
+        "solar": 24470.71,
+        "eb": 3233,
+        "dg": 204,
+        "total": 4908.099999999999,
+        "villas": 4908.1,
+        "common": 5245,
+        "status": "Green",
+        "_src": "excel"
+      }
+    ],
+    "water": [
+      {
+        "month": "Feb-2026",
+        "borewell": null,
+        "dugWell1": 4447,
+        "dugWell2": 470,
+        "missionBhag": null,
+        "total": 4917,
+        "status": "Amber",
+        "_src": "excel"
+      }
+    ],
+    "food": [
+      {
+        "month": "Feb-2026",
+        "planned": 1887.6999999999996,
+        "actual": 1404.9099999999999,
+        "variance": -482.78999999999974,
+        "families": null,
+        "status": "",
+        "_src": "excel"
+      }
+    ],
+    "earth": [
+      {
+        "month": "Feb-2026",
+        "wasteType": "Wet Waste",
+        "produced": 794,
+        "sdpWet": 754,
+        "ofsWet": 3,
+        "villasWet": 0,
+        "siteOffWet": 37,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "wasteType": "Dry Waste",
+        "produced": 573,
+        "sdpDry": 94,
+        "ofsDry": 0,
+        "villasDry": 4,
+        "commonDry": 475,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "wasteType": "Non-Recyclable",
+        "produced": 0,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "wasteType": "Recyclable",
+        "produced": 0,
+        "cardboards": 0,
+        "ironKg": 0,
+        "plasticKg": 0,
+        "paperKg": 0,
+        "electric": 0,
+        "_src": "excel"
+      }
+    ],
+    "air": [
+      {
+        "month": "Feb-2026",
+        "pm25": 30,
+        "pmW1": 22,
+        "pmW2": 32,
+        "pmW3": 34,
+        "pmW4": 32,
+        "pm10": null,
+        "aqi": 22.75,
+        "aqiW1": 22,
+        "aqiW2": 23,
+        "aqiW3": 26,
+        "aqiW4": 20,
+        "co2": null,
+        "location": "RH",
+        "status": "Green",
+        "_src": "excel"
+      }
+    ],
+    "people": [
+      {
+        "month": "Feb-2026",
+        "total": 79,
+        "occupied": 38,
+        "occupancyPct": 48.10126582278481,
+        "plannedFootfall": null,
+        "actualFootfall": 673,
+        "events": 0,
+        "status": "",
+        "_src": "excel"
+      }
+    ],
+    "shelter": [
+      {
+        "month": "Feb-2026",
+        "planned": null,
+        "completed": null,
+        "completionPct": null,
+        "status": "",
+        "_src": "excel"
+      }
+    ],
+    "energyCluster": [
+      {
+        "month": "Feb-2026",
+        "_src": "excel",
+        "RP": 1212.5,
+        "MRP": 782.8,
+        "GP": 479.57,
+        "VP": 426.83,
+        "MDP": 1453.6,
+        "CP": 552.8,
+        "CHP": 0,
+        "SP": 0,
+        "TP": 0
+      }
+    ],
+    "energyDaily": [
+      {
+        "day": 1,
+        "solar": 948.91,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 2,
+        "solar": 876.98,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 3,
+        "solar": 929.84,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 4,
+        "solar": 864.5,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 5,
+        "solar": 944.21,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 6,
+        "solar": 961.97,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 7,
+        "solar": 1082.72,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 8,
+        "solar": 1072.1,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 9,
+        "solar": 1025.11,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 10,
+        "solar": 1097.76,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 11,
+        "solar": 896.32,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 12,
+        "solar": 994.02,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 13,
+        "solar": 959.07,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 14,
+        "solar": 1053.37,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 15,
+        "solar": 1039.81,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 16,
+        "solar": 1045.37,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 17,
+        "solar": 1045.94,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 18,
+        "solar": 1096.71,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 19,
+        "solar": 1050.78,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 20,
+        "solar": 1158.43,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 21,
+        "solar": 1177.52,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 22,
+        "solar": 949.43,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 23,
+        "solar": 770.58,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 24,
+        "solar": 1068.02,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 25,
+        "solar": 817.69,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 26,
+        "solar": 900.49,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 27,
+        "solar": 799.93,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 28,
+        "solar": 1076.13,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 29,
+        "solar": null,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 30,
+        "solar": null,
+        "eb": null,
+        "_src": "excel"
+      },
+      {
+        "day": 31,
+        "solar": null,
+        "eb": null,
+        "_src": "excel"
+      }
+    ],
+    "waterConsumption": [
+      {
+        "month": "Feb-2026",
+        "category": "Per Villa — Domestic",
+        "planned": null,
+        "actual": 7.63,
+        "variance": null,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "Per Villa — Irrigation",
+        "planned": null,
+        "actual": 11.225,
+        "variance": null,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "Rurban Hive",
+        "planned": null,
+        "actual": 62.7,
+        "variance": null,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "GOO",
+        "planned": null,
+        "actual": 7,
+        "variance": null,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "Swimming Pool",
+        "planned": null,
+        "actual": 503,
+        "variance": null,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "MRP Domestic (Villa)",
+        "actual": 70,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "MRP Irrigation (Villa)",
+        "actual": 0,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "MDP Domestic (Villa)",
+        "actual": 253,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "MDP Irrigation (Villa)",
+        "actual": 0,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "RP Domestic (Villa)",
+        "actual": 199,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "RP Irrigation (Villa)",
+        "actual": 0,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "GP Domestic (Villa)",
+        "actual": 164,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "GP Irrigation (Villa)",
+        "actual": 0,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "VP Domestic (Villa)",
+        "actual": 71,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "VP Irrigation (Villa)",
+        "actual": 0,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "CP Domestic (Villa)",
+        "actual": 159,
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "category": "CP Irrigation (Villa)",
+        "actual": 0,
+        "_src": "excel"
+      }
+    ],
+    "waterQuality": [
+      {
+        "month": "Feb-2026",
+        "waterType": "Swimming Pool",
+        "ph": 7.76,
+        "tds": 468,
+        "turbidity": 4.01,
+        "chlorine": 0.06,
+        "ecoli": "Absent",
+        "status": "Green",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "waterType": "WTP",
+        "ph": 8.18,
+        "tds": 435,
+        "turbidity": 18,
+        "chlorine": null,
+        "ecoli": "Not detected",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "waterType": "Dug Well 1",
+        "ph": 7.48,
+        "tds": 531,
+        "turbidity": 3.02,
+        "chlorine": null,
+        "ecoli": "Not detected",
+        "status": "Amber",
+        "_src": "excel"
+      }
+    ],
+    "peopleAmenities": [
+      {
+        "month": "Feb-2026",
+        "area": "Rurban Hive",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "GOO",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "Movie Theatre",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "Swimming Pool",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "Badminton Court",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "Multipurpose Court",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "RP Clubhouse",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "MRP Clubhouse",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "MDP Clubhouse",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "VP Clubhouse",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "GP Clubhouse",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "CP Clubhouse",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "CHP Clubhouse",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "SP Clubhouse",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "TP Clubhouse",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "Temple of Nature",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      }
+    ],
+    "peopleHealthLounge": [
+      {
+        "month": "Feb-2026",
+        "serviceType": "Yoga Classes",
+        "plannedSessions": null,
+        "actualSessions": null,
+        "participants": null,
+        "satisfactionPct": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "serviceType": "Meditation",
+        "plannedSessions": null,
+        "actualSessions": null,
+        "participants": null,
+        "satisfactionPct": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "serviceType": "Health Checkups",
+        "plannedSessions": null,
+        "actualSessions": null,
+        "participants": null,
+        "satisfactionPct": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "serviceType": "Fitness Training",
+        "plannedSessions": null,
+        "actualSessions": null,
+        "participants": null,
+        "satisfactionPct": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "serviceType": "Wellness Workshops",
+        "plannedSessions": null,
+        "actualSessions": null,
+        "participants": null,
+        "satisfactionPct": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "serviceType": "Physiotherapy",
+        "plannedSessions": null,
+        "actualSessions": null,
+        "participants": null,
+        "satisfactionPct": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "serviceType": "Nutrition Counseling",
+        "plannedSessions": null,
+        "actualSessions": null,
+        "participants": null,
+        "satisfactionPct": null,
+        "status": "",
+        "_src": "excel"
+      }
+    ],
+    "peoplePersonalSvc": [
+      {
+        "month": "Feb-2026",
+        "serviceType": "Spa Services",
+        "plannedBookings": 20,
+        "actualBookings": 10,
+        "avgDuration": 900,
+        "satisfactionPct": 90,
+        "status": "Green",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "serviceType": "Personal Training",
+        "plannedBookings": null,
+        "actualBookings": null,
+        "avgDuration": null,
+        "satisfactionPct": null,
+        "status": "Red",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "serviceType": "Dietician Consult",
+        "plannedBookings": 5,
+        "actualBookings": 1,
+        "avgDuration": null,
+        "satisfactionPct": null,
+        "status": "Amber",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "serviceType": "Elderly Care",
+        "plannedBookings": 5,
+        "actualBookings": 1,
+        "avgDuration": null,
+        "satisfactionPct": 80,
+        "status": "Green",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "serviceType": "Child Care",
+        "plannedBookings": null,
+        "actualBookings": null,
+        "avgDuration": null,
+        "satisfactionPct": null,
+        "status": "Red",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "serviceType": "Concierge Services",
+        "plannedBookings": null,
+        "actualBookings": null,
+        "avgDuration": null,
+        "satisfactionPct": null,
+        "status": "Red",
+        "_src": "excel"
+      }
+    ],
+    "peopleSocial": [
+      {
+        "month": "Feb-2026",
+        "eventType": "Community Gatherings",
+        "plannedEvents": 2,
+        "actualEvents": 2,
+        "attendance": 130,
+        "targetAttendance": 100,
+        "status": "Green",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "eventType": "Cultural Programs",
+        "plannedEvents": 1,
+        "actualEvents": 1,
+        "attendance": 26,
+        "targetAttendance": 50,
+        "status": "Amber",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "eventType": "Educational Workshops",
+        "plannedEvents": 0,
+        "actualEvents": 0,
+        "attendance": 0,
+        "targetAttendance": 0,
+        "status": "Red",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "eventType": "Sports Events",
+        "plannedEvents": 0,
+        "actualEvents": 0,
+        "attendance": 0,
+        "targetAttendance": 0,
+        "status": "Red",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "eventType": "Festival Celebrations",
+        "plannedEvents": 1,
+        "actualEvents": 1,
+        "attendance": 22,
+        "targetAttendance": 50,
+        "status": "Amber",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "eventType": "Kids Activities",
+        "plannedEvents": 0,
+        "actualEvents": 0,
+        "attendance": 0,
+        "targetAttendance": 0,
+        "status": "Red",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "eventType": "Senior Citizen Meets",
+        "plannedEvents": 0,
+        "actualEvents": 0,
+        "attendance": 0,
+        "targetAttendance": 0,
+        "status": "Red",
+        "_src": "excel"
+      }
+    ],
+    "peopleQuality": [
+      {
+        "month": "Feb-2026",
+        "serviceCategory": "Food — Restaurant",
+        "qualityScore": 100,
+        "complaints": 2,
+        "resolved": 2,
+        "status": "Green",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "serviceCategory": "Food — Cafe",
+        "qualityScore": null,
+        "complaints": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "serviceCategory": "Wellness — Spa",
+        "qualityScore": 70,
+        "complaints": 2,
+        "resolved": 0,
+        "status": "Amber",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "serviceCategory": "Fitness — Gym",
+        "qualityScore": null,
+        "complaints": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "serviceCategory": "OFM — Housekeeping",
+        "qualityScore": null,
+        "complaints": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      }
+    ],
+    "peopleSecurity": [
+      {
+        "month": "Feb-2026",
+        "metric": "Security Patrols",
+        "target": 224,
+        "actual": 220,
+        "incidents": 0,
+        "responseTime": null,
+        "status": "Amber",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "metric": "CCTV Uptime",
+        "target": null,
+        "actual": null,
+        "incidents": null,
+        "responseTime": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "metric": "Access Control",
+        "target": null,
+        "actual": null,
+        "incidents": null,
+        "responseTime": null,
+        "status": "",
+        "_src": "excel"
+      }
+    ],
+    "peopleInternet": [
+      {
+        "month": "Feb-2026",
+        "metric": "Network Uptime",
+        "target": null,
+        "actual": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "metric": "Avg Speed (Mbps)",
+        "target": 500,
+        "actual": 487,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "metric": "WiFi Coverage",
+        "target": null,
+        "actual": null,
+        "status": "",
+        "_src": "excel"
+      }
+    ],
+    "peopleUpskilling": [
+      {
+        "month": "Feb-2026",
+        "program": "Technical Skills",
+        "targetParticipants": 1,
+        "actualParticipants": 1,
+        "trainingHrs": 3,
+        "completionPct": 100,
+        "status": "95",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "program": "Safety Training",
+        "targetParticipants": 0,
+        "actualParticipants": 0,
+        "trainingHrs": 0,
+        "completionPct": 0,
+        "status": "0",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "program": "Customer Service",
+        "targetParticipants": null,
+        "actualParticipants": null,
+        "trainingHrs": null,
+        "completionPct": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "program": "Soft Skills",
+        "targetParticipants": 1,
+        "actualParticipants": 1,
+        "trainingHrs": 2,
+        "completionPct": 100,
+        "status": "95",
+        "_src": "excel"
+      }
+    ],
+    "peopleInitiatives": [],
+    "shelterCommunity": [
+      {
+        "month": "Feb-2026",
+        "area": "Rurban Hive",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "GOO",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "Movie Theatre",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "Swimming Pool",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "Badminton Court",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "Multipurpose Court",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "RP Clubhouse",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "MRP Clubhouse",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "MDP Clubhouse",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "VP Clubhouse",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "GP Clubhouse",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "CP Clubhouse",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "CHP Clubhouse",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "SP Clubhouse",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "TP Clubhouse",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "area": "Temple of Nature",
+        "plannedHrs": null,
+        "actualHrs": null,
+        "peakTimes": "",
+        "status": "",
+        "_src": "excel"
+      }
+    ],
+    "shelterMaintenance": [
+      {
+        "month": "Feb-2026",
+        "system": "Electrical — Villas",
+        "plannedTasks": null,
+        "completedTasks": null,
+        "plannedCost": null,
+        "actualCost": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "system": "Electrical — Amenities",
+        "plannedTasks": null,
+        "completedTasks": null,
+        "plannedCost": null,
+        "actualCost": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "system": "Plumbing — Villas",
+        "plannedTasks": null,
+        "completedTasks": null,
+        "plannedCost": null,
+        "actualCost": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "system": "Plumbing — Amenities",
+        "plannedTasks": null,
+        "completedTasks": null,
+        "plannedCost": null,
+        "actualCost": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "system": "HVAC — All Areas",
+        "plannedTasks": null,
+        "completedTasks": null,
+        "plannedCost": null,
+        "actualCost": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "system": "Civil — General",
+        "plannedTasks": null,
+        "completedTasks": null,
+        "plannedCost": null,
+        "actualCost": null,
+        "status": "",
+        "_src": "excel"
+      }
+    ],
+    "shelterCivil": [
+      {
+        "month": "Feb-2026",
+        "infrastructure": "Internal — Roads",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "All Areas — Drainage",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "Community — Water Tanks",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "Perimeter — Boundary Walls",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "All Villas — Building Facade",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "🌿 §4 PPM Landscape Maintenance",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "Location — Area",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "Status",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "Central Park — Garden",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "Villa Gardens — Garden",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "Sports Area — Lawn",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "All Areas — Pathways",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "Landscape — Water Features",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "🐛 §5 Pest Control",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "Location — Type",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "Status",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "Villas — Mosquito",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "Common Areas — Mosquito",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "Villas — Termite",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "infrastructure": "Common Areas — Rodent",
+        "plannedChecks": null,
+        "actualChecks": null,
+        "issuesFound": null,
+        "resolved": null,
+        "status": "",
+        "_src": "excel"
+      }
+    ],
+    "shelterLandscape": [],
+    "shelterPest": [
+      {
+        "month": "Feb-2026",
+        "treatmentType": "Villas — Mosquito",
+        "plannedTreatments": null,
+        "actualTreatments": null,
+        "effectivenessPct": null,
+        "complaints": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "treatmentType": "Common Areas — Mosquito",
+        "plannedTreatments": null,
+        "actualTreatments": null,
+        "effectivenessPct": null,
+        "complaints": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "treatmentType": "Villas — Termite",
+        "plannedTreatments": null,
+        "actualTreatments": null,
+        "effectivenessPct": null,
+        "complaints": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Feb-2026",
+        "treatmentType": "Common Areas — Rodent",
+        "plannedTreatments": null,
+        "actualTreatments": null,
+        "effectivenessPct": null,
+        "complaints": null,
+        "status": "",
+        "_src": "excel"
+      }
+    ]
+  }
 }
