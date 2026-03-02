@@ -459,13 +459,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
   <nav class="nav-tabs">
     <button class="nav-tab active" onclick="showPage('executive',this)">📊 Executive</button>
-    <button class="nav-tab" onclick="showPage('energy',this)">⚡ Energy</button>
-    <button class="nav-tab" onclick="showPage('water',this)">💧 Water</button>
-    <button class="nav-tab" onclick="showPage('food',this)">🌱 Food</button>
-    <button class="nav-tab" onclick="showPage('earth',this)">🌍 Earth</button>
-    <button class="nav-tab" onclick="showPage('air',this)">💨 Air</button>
-    <button class="nav-tab" onclick="showPage('people',this)">👥 People</button>
-    <button class="nav-tab" onclick="showPage('shelter',this)">🏠 Shelter</button>
+    <button class="nav-tab" onclick="showPage('energy',this)" id="tab-energy"></button>
+    <button class="nav-tab" onclick="showPage('water',this)" id="tab-water"></button>
+    <button class="nav-tab" onclick="showPage('food',this)" id="tab-food"></button>
+    <button class="nav-tab" onclick="showPage('earth',this)" id="tab-earth"></button>
+    <button class="nav-tab" onclick="showPage('air',this)" id="tab-air"></button>
+    <button class="nav-tab" onclick="showPage('people',this)" id="tab-people"></button>
+    <button class="nav-tab" onclick="showPage('shelter',this)" id="tab-shelter"></button>
   </nav>
 
   <main class="main">
@@ -483,7 +483,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
     <!-- ENERGY -->
     <div id="page-energy" class="page">
-      <div class="section-title">⚡ Energy Performance</div>
+      <div class="section-title" id="hdr-energy"> Energy Performance</div>
       <div class="month-filter" id="energyMF"></div>
       <div class="kpi-grid" id="energyKpis"></div>
       <div class="chart-grid">
@@ -524,7 +524,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
     <!-- WATER -->
     <div id="page-water" class="page">
-      <div class="section-title">💧 Water Performance</div>
+      <div class="section-title" id="hdr-water"> Water Performance</div>
       <div class="month-filter" id="waterMF"></div>
       <div class="kpi-grid" id="waterKpis"></div>
       <div class="chart-grid">
@@ -568,7 +568,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
     <!-- FOOD -->
     <div id="page-food" class="page">
-      <div class="section-title">🌱 Food Production</div>
+      <div class="section-title" id="hdr-food"> Food Production</div>
       <div class="month-filter" id="foodMF"></div>
       <div class="kpi-grid" id="foodKpis"></div>
       <div class="chart-grid">
@@ -586,7 +586,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
     <!-- EARTH -->
     <div id="page-earth" class="page">
-      <div class="section-title">🌍 Earth & Waste</div>
+      <div class="section-title" id="hdr-earth"> Earth &amp; Waste</div>
       <div class="kpi-grid" id="earthKpis"></div>
       <div class="chart-grid">
         <div class="chart-panel"><div class="chart-title">Waste by Category <span>kg</span></div>
@@ -602,7 +602,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
     <!-- AIR -->
     <div id="page-air" class="page">
-      <div class="section-title">💨 Air Quality</div>
+      <div class="section-title" id="hdr-air"> Air Quality</div>
       <div class="kpi-grid" id="airKpis"></div>
       <div class="chart-grid">
         <div class="chart-panel"><div class="chart-title">PM2.5 Trend <span>µg/m³</span></div>
@@ -618,7 +618,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
     <!-- PEOPLE -->
     <div id="page-people" class="page">
-      <div class="section-title">👥 People & Occupancy</div>
+      <div class="section-title" id="hdr-people"> People &amp; Occupancy</div>
       <div class="month-filter" id="peopleMF"></div>
       <div class="kpi-grid" id="peopleKpis"></div>
       <div class="chart-grid">
@@ -711,7 +711,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
     <!-- SHELTER -->
     <div id="page-shelter" class="page">
-      <div class="section-title">🏠 Shelter & Maintenance</div>
+      <div class="section-title" id="hdr-shelter"> Shelter &amp; Maintenance</div>
       <div class="month-filter" id="shelterMF"></div>
       <div class="kpi-grid" id="shelterKpis"></div>
       <div class="chart-grid">
@@ -1686,9 +1686,23 @@ async function autoLoadPublicData(){
 }
 
 // ════════════════════════════════════
+//  STRAND ICON INJECTION
+// ════════════════════════════════════
+function initStrandIcons(){
+  const tabs={energy:'Energy',water:'Water',food:'Food',earth:'Earth',air:'Air',people:'People',shelter:'Shelter'};
+  Object.entries(tabs).forEach(([k,label])=>{
+    const tab=document.getElementById('tab-'+k);
+    if(tab) tab.innerHTML=`<span style="display:inline-flex;align-items:center;gap:5px;vertical-align:middle">${STRAND_SVG[k]} ${label}</span>`;
+    const hdr=document.getElementById('hdr-'+k);
+    if(hdr) hdr.innerHTML=STRAND_SVG[k]+hdr.innerHTML;
+  });
+}
+
+// ════════════════════════════════════
 //  INIT
 // ════════════════════════════════════
 (async () => {
+  initStrandIcons();
   await loadFromStorage();
   const hasData = manualEntries.length > 0 ||
     D.energy.length > 0 || D.water.length > 0 || D.food.length > 0 ||
@@ -3913,6 +3927,20 @@ function progRow(label,val,total,color){
     <div class="progress-bg"><div class="progress-fill" style="width:${p}%;background:${color}"></div></div></div>`;
 }
 
+// ── STRAND SVG ICONS ──────────────────────────
+const STRAND_SVG={
+  energy:`<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="22" r="8" stroke="#e8a020" stroke-width="2.4"/><path d="M22 3v6M22 35v6M3 22h6M35 22h6" stroke="#e8a020" stroke-width="2.4" stroke-linecap="round"/><path d="M8.5 8.5 13 13M31 31l4.5 4.5M35.5 8.5 31 13M13 31l-4.5 4.5" stroke="#e8a020" stroke-width="2.4" stroke-linecap="round"/><path d="M22 15.5 C23.5 16.5 24.5 18.5 23.5 20.5 C22.5 22 21.5 23.5 23 25.5" stroke="#e8a020" stroke-width="2" stroke-linecap="round"/></svg>`,
+  water:`<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 44 44" fill="none"><path d="M13 16 C13 16 9.5 21 9.5 24.5 C9.5 28 11.5 30 14 30" stroke="#28b0d8" stroke-width="2.2" stroke-linecap="round" fill="none"/><circle cx="14" cy="12" r="2.8" fill="#28b0d8"/><path d="M20 18 Q28 12 36 18" stroke="#28b0d8" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M20 26 Q28 20 36 26" stroke="#28b0d8" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M20 34 Q28 28 36 34" stroke="#28b0d8" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>`,
+  food:`<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 44 44" fill="none"><path d="M22 40 L22 26 C22 20 24 13 20 8" stroke="#5ab028" stroke-width="2.4" stroke-linecap="round"/><path d="M22 38 C21 32 18 26 15 21 C12 16 8 13 11 8" stroke="#5ab028" stroke-width="2.4" stroke-linecap="round"/><path d="M22 38 C23 32 26 26 29 21 C32 16 36 13 33 8" stroke="#5ab028" stroke-width="2.4" stroke-linecap="round"/><line x1="9" y1="42" x2="35" y2="42" stroke="#5ab028" stroke-width="2" stroke-linecap="round"/></svg>`,
+  earth:`<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 44 44" fill="none"><path d="M6 36 Q22 10 38 36" stroke="#7a2818" stroke-width="2.4" stroke-linecap="round" fill="none"/><line x1="4" y1="40" x2="40" y2="40" stroke="#7a2818" stroke-width="2.4" stroke-linecap="round"/><path d="M11 32 Q22 16 33 32" stroke="#7a2818" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M15 28 Q22 19 29 28" stroke="#7a2818" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M19 24 Q22 21 25 24" stroke="#7a2818" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>`,
+  air:`<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 44 44" fill="none"><path d="M10 16 C18 16 30 18 34 14 C38 10 36 6 31 6 C26 6 24 10 26 14" stroke="#1e3a8a" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M10 24 C20 24 32 22 36 26 C40 30 38 34 34 34 C30 34 28 30 30 26" stroke="#1e3a8a" stroke-width="2.6" stroke-linecap="round" fill="none"/><line x1="4" y1="20" x2="34" y2="20" stroke="#1e3a8a" stroke-width="2.4" stroke-linecap="round"/></svg>`,
+  people:`<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 44 44" fill="none"><circle cx="15" cy="11" r="4.5" stroke="#e040a0" stroke-width="2.4"/><path d="M5 22 L15 19 L25 22" stroke="#e040a0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><line x1="15" y1="19" x2="15" y2="35" stroke="#e040a0" stroke-width="2.4" stroke-linecap="round"/><circle cx="29" cy="11" r="4.5" stroke="#e040a0" stroke-width="2.4"/><path d="M19 22 L29 19 L39 22" stroke="#e040a0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><line x1="29" y1="19" x2="29" y2="35" stroke="#e040a0" stroke-width="2.4" stroke-linecap="round"/></svg>`,
+  shelter:`<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="12" r="5.5" stroke="#e07020" stroke-width="2.4"/><line x1="22" y1="21" x2="22" y2="32" stroke="#e07020" stroke-width="2.4" stroke-linecap="round"/><path d="M6 42 Q22 28 38 42" stroke="#e07020" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M10 38 Q22 26 34 38" stroke="#e07020" stroke-width="2.2" stroke-linecap="round" fill="none"/><line x1="16" y1="30" x2="28" y2="30" stroke="#e07020" stroke-width="2" stroke-linecap="round"/></svg>`
+};
+// Larger versions (28px) for strand cards
+const STRAND_SVG_LG={};
+Object.keys(STRAND_SVG).forEach(k=>{STRAND_SVG_LG[k]=STRAND_SVG[k].replace(/width="22" height="22"/,'width="28" height="28"');});
+
 // ── EXECUTIVE ─────────────────────────────────
 function renderExecutive(){
   const eRow=latestOf(D.energy),wRow=latestOf(D.water),fRow=latestOf(D.food);
@@ -3953,27 +3981,27 @@ function renderExecutive(){
   const earthUnit=_earthNewFmt?'kg total waste':'kg produced';
 
   let html='';
-  html+=strandCard('energy','⚡','Energy',C.yellow,eRow.month||'—',fmt(eTotD),'kWh',
+  html+=strandCard('energy',STRAND_SVG_LG.energy,'Energy',C.yellow,eRow.month||'—',fmt(eTotD),'kWh',
     metaTile('Solar',fmt(eRow.solar),'kWh')+metaTile('EB',fmt(eRow.eb),'kWh')+metaTile('DG',fmt(eRow.dg),'kWh'),
     'xeEDt',tagHtml(eRow.status),0);
-  html+=strandCard('water','💧','Water',C.blue,wRow.month||'—',fmt(wRow.total),'KL',
+  html+=strandCard('water',STRAND_SVG_LG.water,'Water',C.blue,wRow.month||'—',fmt(wRow.total),'KL',
     metaTile('Dug Well 1',fmt(wRow.dugWell1),'KL')+metaTile('Borewell',fmt(wRow.borewell),'KL')+metaTile('Dug Well 2',fmt(wRow.dugWell2),'KL'),
     'xeWDt',tagHtml(wRow.status),0.05);
-  html+=strandCard('food','🌱','Food',C.green,fRow.month||'—',fmt(fRow.actual),'kg actual',
+  html+=strandCard('food',STRAND_SVG_LG.food,'Food',C.green,fRow.month||'—',fmt(fRow.actual),'kg actual',
     metaTile('Planned',fmt(fRow.planned),'kg')+metaTile('Variance',fmt(fRow.variance),'kg')+metaTile('Achievement',fRow.planned>0?fAch+'%':'—','of plan'),
     'xeFBr',tagHtml(fRow.status),0.10);
-  html+=strandCard('earth','🌍','Earth','#7ec845',latestEM||'—',earthPrimary,earthUnit,
+  html+=strandCard('earth',STRAND_SVG_LG.earth,'Earth','#7ec845',latestEM||'—',earthPrimary,earthUnit,
     _earthNewFmt
       ?metaTile('Wet',fmt(wet.produced),'kg')+metaTile('Dry',fmt(dry.produced),'kg')+metaTile('Recyclable',fmt(rec.produced),'kg')
       :metaTile('Produced',fmt(earthRow.produced),'kg')+metaTile('Reused',fmt(earthRow.reused),'kg')+metaTile('Reuse%',pct(earthRow.reuseP),''),
     'xeEaBr',tagHtml(earthRow.status),0.15);
-  html+=strandCard('air','💨','Air','#94d1e8',airRow.month||'—',airRow.pm25?Number(airRow.pm25).toFixed(1):'—','µg/m³ PM2.5',
+  html+=strandCard('air',STRAND_SVG_LG.air,'Air','#94d1e8',airRow.month||'—',airRow.pm25?Number(airRow.pm25).toFixed(1):'—','µg/m³ PM2.5',
     metaTile('AQI',airRow.aqi?Math.round(airRow.aqi):'—','index')+metaTile('Location',airRow.location||'—','')+metaTile('Compliance',airRow.aqi?(airRow.aqi<=100?'Yes':'No'):'—','AQI≤100'),
     'xeAiBr',tagHtml(airStatus),0.20);
-  html+=strandCard('people','👥','People',C.purple,pRow.month||'—',fmt(pRow.occupied),'villas occ.',
+  html+=strandCard('people',STRAND_SVG_LG.people,'People',C.purple,pRow.month||'—',fmt(pRow.occupied),'villas occ.',
     metaTile('Total',fmt(pRow.total),'villas')+metaTile('Occupancy',pOcc+'%','')+metaTile('Footfall',fmt(pRow.actualFootfall),'visits'),
     'xePDt',tagHtml(pRow.status),0.25);
-  html+=strandCard('shelter','🏠','Shelter',C.orange,sRow.month||'—',fmt(sRow.completed),'tasks done',
+  html+=strandCard('shelter',STRAND_SVG_LG.shelter,'Shelter',C.orange,sRow.month||'—',fmt(sRow.completed),'tasks done',
     metaTile('Planned',fmt(sRow.planned),'tasks')+metaTile('Civil',pct(sRow.civilPct),'')+metaTile('Landscape',pct(sRow.landscapePct),''),
     'xeShBr',tagHtml(sRow.status),0.30);
 
