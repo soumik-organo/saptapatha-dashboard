@@ -575,14 +575,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
       <div class="section-title">🌍 Earth & Waste</div>
       <div class="kpi-grid" id="earthKpis"></div>
       <div class="chart-grid">
-        <div class="chart-panel"><div class="chart-title">Waste by Type <span>kg</span></div>
+        <div class="chart-panel"><div class="chart-title">Waste by Category <span>kg</span></div>
           <div class="chart-wrap"><canvas id="eaBar"></canvas></div></div>
-        <div class="chart-panel"><div class="chart-title">Reuse % Trend</div>
+        <div class="chart-panel"><div class="chart-title">Monthly Waste Trend <span>kg</span></div>
           <div class="chart-wrap"><canvas id="eaTrend"></canvas></div></div>
       </div>
       <div class="section-title">All Records</div>
-      <div class="chart-panel"><table class="data-table">
-        <thead><tr><th>Month</th><th>Waste Type</th><th class="num">Produced kg</th><th class="num">Reused kg</th><th class="num">Processed kg</th><th class="num">Reuse%</th><th>Status</th></tr></thead>
+      <div class="chart-panel"><table class="data-table" id="earthTblWrap">
+        <thead id="earthTblHead"></thead>
         <tbody id="earthTb"></tbody></table></div>
     </div>
 
@@ -1913,23 +1913,85 @@ function parseNewTemplate(wb,filename){
   var earthSn=wb.SheetNames.find(function(n){return n.includes('Earth');});
   if(earthSn){
     var eaRaw=XLSX.utils.sheet_to_json(wb.Sheets[earthSn],{defval:null,raw:true,header:1});
-    var wTypes=['Organic','Plastic','E-Waste','Construction','Paper','Glass'];
-    var earthStatus='';
+    // Detect new daily format: look for "Date" as a column header in first 10 rows
+    var isNewEarthFmt=false;
+    for(var i=0;i<Math.min(10,eaRaw.length);i++){
+      if(eaRaw[i]&&str(eaRaw[i][0]).toLowerCase().trim()==='date'){isNewEarthFmt=true;break;}
+    }
+    if(isNewEarthFmt){
+      // New daily format: sum all date rows
+      // Cols (0-indexed): 0=Date, 1=SDP VegTrim, 2=SDP Food, 3=OFS Veg,
+      //   4=Villas Flower, 5=Villas Food, 6=SiteOff Food, 7=TOTAL WET,
+      //   8=SDP Dry, 9=OFS Dry, 10=Villas Dry, 11=Common Dry, 12=TOTAL DRY,
+      //   13=Non-Recyclable, 14=Cardboards, 15=Iron, 16=Plastic, 17=Paper, 18=Electric
+      var wetTotal=0,dryTotal=0,nonRec=0,recyclable=0;
+      var sdpWet=0,ofsWet=0,villasWet=0,siteOffWet=0;
+      var sdpDry=0,ofsDry=0,villasDry=0,commonDry=0;
+      var cardboards=0,ironKg=0,plasticKg=0,paperKg=0,electric=0;
+      var dateRE=/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}$/;
+      for(var i=0;i<eaRaw.length;i++){
+        var r=eaRaw[i]; if(!r)continue;
+        var a=str(r[0]).trim();
+        var isDateRow=dateRE.test(a)||(typeof r[0]==='number'&&r[0]>40000&&r[0]<60000);
+        if(!isDateRow)continue;
+        sdpWet+=num(r[1])+num(r[2]);
+        ofsWet+=num(r[3]);
+        villasWet+=num(r[4])+num(r[5]);
+        siteOffWet+=num(r[6]);
+        wetTotal+=num(r[1])+num(r[2])+num(r[3])+num(r[4])+num(r[5])+num(r[6]);
+        sdpDry+=num(r[8]); ofsDry+=num(r[9]); villasDry+=num(r[10]); commonDry+=num(r[11]);
+        dryTotal+=num(r[8])+num(r[9])+num(r[10])+num(r[11]);
+        nonRec+=num(r[13]);
+        cardboards+=num(r[14]); ironKg+=num(r[15]); plasticKg+=num(r[16]); paperKg+=num(r[17]); electric+=num(r[18]);
+        recyclable+=num(r[14])+num(r[15])+num(r[16])+num(r[17])+num(r[18]);
+      }
+      if(month){
+        out.earth.push({month:month,wasteType:'Wet Waste',produced:wetTotal,sdpWet:sdpWet,ofsWet:ofsWet,villasWet:villasWet,siteOffWet:siteOffWet,_src:'excel'});
+        out.earth.push({month:month,wasteType:'Dry Waste',produced:dryTotal,sdpDry:sdpDry,ofsDry:ofsDry,villasDry:villasDry,commonDry:commonDry,_src:'excel'});
+        out.earth.push({month:month,wasteType:'Non-Recyclable',produced:nonRec,_src:'excel'});
+        out.earth.push({month:month,wasteType:'Recyclable',produced:recyclable,cardboards:cardboards,ironKg:ironKg,plasticKg:plasticKg,paperKg:paperKg,electric:electric,_src:'excel'});
+      }
+    } else {
+      // Old format: Waste Type | Produced | Reused | Processed | Residue
+      var wTypes=['Organic','Plastic','E-Waste','Construction','Paper','Glass'];
+      var earthStatus='';
+      for(var i=0;i<eaRaw.length;i++){
+        var r=eaRaw[i]; if(!r)continue;
+        var a=str(r[0]),aLo=a.toLowerCase();
+        var clean=aLo.replace(/[^\w\s\-]/g,'').trim();
+        var wt=wTypes.find(function(w){return clean.includes(w.toLowerCase());});
+        if(wt){
+          var produced=num(r[1]),reused=num(r[2]),processed=num(r[3]),residue=num(r[4]);
+          var reuseP=produced>0&&reused!=null?Math.round((reused/produced)*100):null;
+          out.earth.push({month:month,wasteType:wt,produced:produced,reused:reused,processed:processed,residue:residue,reuseP:reuseP,status:'',_src:'excel'});
+          continue;
+        }
+        if(aLo.includes('status'))earthStatus=str(r[1]);
+      }
+      if(out.earth.length===0&&month)
+        out.earth.push({month:month,wasteType:'Total',produced:null,reused:null,processed:null,residue:null,reuseP:null,status:earthStatus,_src:'excel'});
+    }
+    // Biodiversity (both formats)
+    var bioDone=false;
     for(var i=0;i<eaRaw.length;i++){
       var r=eaRaw[i]; if(!r)continue;
-      var a=str(r[0]),aLo=a.toLowerCase();
-      var clean=aLo.replace(/[^\w\s\-]/g,'').trim();
-      var wt=wTypes.find(function(w){return clean.includes(w.toLowerCase());});
-      if(wt){
-        var produced=num(r[1]),reused=num(r[2]),processed=num(r[3]),residue=num(r[4]);
-        var reuseP=produced>0&&reused!=null?Math.round((reused/produced)*100):null;
-        out.earth.push({month:month,wasteType:wt,produced:produced,reused:reused,processed:processed,residue:residue,reuseP:reuseP,status:'',_src:'excel'});
-        continue;
+      var aLo2=str(r[0]).toLowerCase();
+      if(aLo2.includes('biodiversity')){bioDone=true;continue;}
+      if(bioDone){
+        if(aLo2.includes('cover')||aLo2.includes('status'))break;
+        var indType=str(r[0]),cnt=num(r[1]);
+        if(indType&&cnt!=null)out.earth.push({month:month,wasteType:'__bio__',bioType:indType,count:cnt,_src:'excel'});
       }
-      if(aLo.includes('status'))earthStatus=str(r[1]);
     }
-    if(out.earth.length===0&&month)
-      out.earth.push({month:month,wasteType:'Total',produced:null,reused:null,processed:null,residue:null,reuseP:null,status:earthStatus,_src:'excel'});
+    // Green cover
+    for(var i=0;i<eaRaw.length;i++){
+      var r=eaRaw[i]; if(!r)continue;
+      if(str(r[0]).toLowerCase().includes('green cover')){
+        var gcVal=num(r[1]);
+        if(gcVal!=null)out.earth.push({month:month,wasteType:'__greencover__',greenCover:gcVal,_src:'excel'});
+        break;
+      }
+    }
   }
 
   // ── AIR ──
@@ -3746,13 +3808,17 @@ function progRow(label,val,total,color){
 function renderExecutive(){
   const eRow=latestOf(D.energy),wRow=latestOf(D.water),fRow=latestOf(D.food);
   const pRow=latestOf(D.people),sRow=latestOf(D.shelter),airRow=latestOf(D.air);
-  const earthRow=latestOf(D.earth.filter(r=>r.wasteType==='Organic Waste')||D.earth);
+  const _earthEd=(D.earth||[]).filter(r=>r.wasteType&&!r.wasteType.startsWith('__'));
+  const _earthNewFmt=_earthEd.some(r=>r.wasteType==='Wet Waste');
+  const earthRow=_earthNewFmt
+    ? latestOf(_earthEd.filter(r=>r.wasteType==='Wet Waste'))||latestOf(_earthEd)||{}
+    : latestOf(_earthEd.filter(r=>r.wasteType==='Organic Waste'))||latestOf(_earthEd)||{};
 
   const pillarDefs=[
     {emoji:'⚡',name:'Energy',val:eRow.total?fmt(eRow.total)+' kWh':'—',bar:eRow.solar&&eRow.total?Math.min((eRow.solar/eRow.total)*100,100):20,color:C.yellow,status:eRow.status,page:'energy'},
     {emoji:'💧',name:'Water',val:wRow.total?fmt(wRow.total)+' KL':'—',bar:Math.min(wRow.stability||0,100),color:C.blue,status:wRow.status,page:'water'},
     {emoji:'🌱',name:'Food',val:fRow.actual?fmt(fRow.actual)+' kg':'—',bar:fRow.planned>0?Math.min((fRow.actual/fRow.planned)*100,100):0,color:C.green,status:fRow.status,page:'food'},
-    {emoji:'🌍',name:'Earth',val:earthRow.reuseP?pct(earthRow.reuseP)+' reuse':'—',bar:Math.min(earthRow.reuseP||0,100),color:'#7ec845',status:earthRow.status,page:'earth'},
+    {emoji:'🌍',name:'Earth',val:_earthNewFmt?(earthRow.produced!=null?fmt(earthRow.produced)+' kg wet':'—'):(earthRow.reuseP?pct(earthRow.reuseP)+' reuse':'—'),bar:_earthNewFmt?Math.min(earthRow.produced||0,500)/5:Math.min(earthRow.reuseP||0,100),color:'#7ec845',status:earthRow.status,page:'earth'},
     {emoji:'💨',name:'Air',val:airRow.aqi?'AQI '+Math.round(airRow.aqi):'—',bar:airRow.aqi?Math.max(0,100-airRow.aqi):0,color:'#94d1e8',status:airRow.aqi<=100?'Green':'Amber',page:'air'},
     {emoji:'👥',name:'People',val:pRow.occupied?pRow.occupied+' occ':'—',bar:pRow.total>0?(pRow.occupied/pRow.total)*100:0,color:C.purple,status:pRow.status,page:'people'},
     {emoji:'🏠',name:'Shelter',val:sRow.civilPct?pct(sRow.civilPct)+' civil':'—',bar:Math.min(sRow.civilPct||0,100),color:C.orange,status:sRow.status,page:'shelter'},
@@ -3783,7 +3849,7 @@ function renderExecutive(){
     ['⚡ Energy',eRow.total?fmt(eRow.total)+' kWh':'—',eRow.status,eRow._src],
     ['💧 Water',wRow.total?fmt(wRow.total)+' KL':'—',wRow.status,wRow._src],
     ['🌱 Food',fRow.actual?fmt(fRow.actual)+' kg ('+pct(fRow.planned>0?(fRow.actual/fRow.planned)*100:null)+' of plan)':'—',fRow.status,fRow._src],
-    ['🌍 Earth',earthRow.reuseP?pct(earthRow.reuseP)+' reuse rate':'—',earthRow.status,earthRow._src],
+    ['🌍 Earth',_earthNewFmt?(earthRow.produced!=null?fmt(earthRow.produced)+' kg wet waste':'—'):(earthRow.reuseP?pct(earthRow.reuseP)+' reuse rate':'—'),earthRow.status,earthRow._src],
     ['💨 Air',airRow.aqi?'AQI '+Math.round(airRow.aqi)+(airRow.location?' @ '+airRow.location:''):'—',airRow.aqi<=100?'Green':'Amber',airRow._src],
     ['👥 People',pRow.total?pRow.occupied+'/'+pRow.total+' villas':'—',pRow.status,pRow._src],
     ['🏠 Shelter',sRow.planned?sRow.completed+'/'+sRow.planned+' tasks':'—',sRow.status,sRow._src],
@@ -3965,27 +4031,65 @@ function renderFood(){
 
 // ── EARTH ───────────────────────────────────────
 function renderEarth(){
-  const ed=D.earth||[];
-  const organic=ed.filter(r=>r.wasteType&&r.wasteType.toLowerCase().includes('organic'));
-  const row=latestOf(organic)||latestOf(ed);
-  document.getElementById('earthKpis').innerHTML=
-    kpiCard('♻️','Produced',fmt(row.produced),'kg — '+row.month,tagHtml(row.status),C.green,0)+
-    kpiCard('🌿','Reused',fmt(row.reused),'kg',row.reuseP?`<span class="tag tag-${row.reuseP>=85?'green':row.reuseP>=70?'amber':'red'}">${pct(row.reuseP)}</span>`:'',C.green,0.04)+
-    kpiCard('🏭','Processed',fmt(row.processed),'kg','','#7ec845',0.08);
-  const latestM=row.month;
-  const mRows=ed.filter(r=>r.month===latestM);
-  mkBar('eaBar',mRows.map(r=>r.wasteType||'—'),[
-    {label:'Produced',data:mRows.map(r=>r.produced||0),backgroundColor:C.amber,borderRadius:3,borderWidth:0},
-    {label:'Reused',data:mRows.map(r=>r.reused||0),backgroundColor:C.green,borderRadius:3,borderWidth:0},
-  ]);
-  const mSummary=Object.values(ed.reduce((acc,r)=>{if(!acc[r.month])acc[r.month]={month:r.month,reuseP:r.reuseP};return acc;},{}));
-  mkLine('eaTrend',mSummary.map(r=>r.month),[
-    {label:'Reuse%',data:mSummary.map(r=>r.reuseP||0),borderColor:C.green,backgroundColor:'rgba(45,255,138,0.07)',fill:true,tension:0.4,pointRadius:3},
-  ]);
-  document.getElementById('earthTb').innerHTML=ed.map(r=>`<tr>
-    <td>${r.month}</td><td>${r.wasteType||'—'}</td><td class="num">${fmt(r.produced)}</td>
-    <td class="num">${fmt(r.reused)}</td><td class="num">${fmt(r.processed)}</td>
-    <td class="num">${pct(r.reuseP)}</td><td>${tagHtml(r.status)}</td></tr>`).join('');
+  const ed=(D.earth||[]).filter(r=>r.wasteType&&!r.wasteType.startsWith('__'));
+  const isNewFmt=ed.some(r=>r.wasteType==='Wet Waste'||r.wasteType==='Dry Waste');
+
+  if(isNewFmt){
+    // New daily-aggregate format: Wet Waste, Dry Waste, Non-Recyclable, Recyclable
+    const latestM=ed.length?ed[ed.length-1].month:'—';
+    const mRows=ed.filter(r=>r.month===latestM);
+    const get=(t)=>mRows.find(r=>r.wasteType===t)||{};
+    const wet=get('Wet Waste'),dry=get('Dry Waste'),nonRec=get('Non-Recyclable'),rec=get('Recyclable');
+    const totalKg=(wet.produced||0)+(dry.produced||0)+(nonRec.produced||0)+(rec.produced||0);
+    const recyclePct=totalKg>0?Math.round(((rec.produced||0)/totalKg)*100):null;
+    document.getElementById('earthKpis').innerHTML=
+      kpiCard('💧','Wet Waste',fmt(wet.produced),'kg — '+latestM,'',C.green,0)+
+      kpiCard('🗑️','Dry Waste',fmt(dry.produced),'kg','',C.amber,0.04)+
+      kpiCard('⚠️','Non-Recyclable',fmt(nonRec.produced),'kg','',C.red,0.08)+
+      kpiCard('♻️','Recyclable',fmt(rec.produced),'kg',recyclePct!=null?`<span class="tag tag-${recyclePct>=30?'green':recyclePct>=15?'amber':'red'}">${recyclePct}% of total</span>`:'','#7ec845',0.12);
+    mkBar('eaBar',['Wet Waste','Dry Waste','Non-Recyclable','Recyclable'],[
+      {label:'kg',data:[wet.produced||0,dry.produced||0,nonRec.produced||0,rec.produced||0],
+       backgroundColor:[C.blue,C.amber,C.red,'#7ec845'],borderRadius:3,borderWidth:0},
+    ]);
+    // Trend: group by month, sum wet+dry
+    const byMonth={};
+    ed.forEach(r=>{
+      if(!byMonth[r.month])byMonth[r.month]={month:r.month,wet:0,dry:0};
+      if(r.wasteType==='Wet Waste')byMonth[r.month].wet=r.produced||0;
+      if(r.wasteType==='Dry Waste')byMonth[r.month].dry=r.produced||0;
+    });
+    const trend=Object.values(byMonth).sort((a,b)=>a.month.localeCompare(b.month));
+    mkLine('eaTrend',trend.map(r=>r.month),[
+      {label:'Wet',data:trend.map(r=>r.wet),borderColor:C.blue,backgroundColor:'rgba(77,184,255,0.07)',fill:true,tension:0.4,pointRadius:3},
+      {label:'Dry',data:trend.map(r=>r.dry),borderColor:C.amber,backgroundColor:'rgba(255,179,64,0.07)',fill:true,tension:0.4,pointRadius:3},
+    ],{plugins:{legend:{display:true}}});
+    document.getElementById('earthTblHead').innerHTML='<tr><th>Month</th><th>Category</th><th class="num">Total kg</th></tr>';
+    document.getElementById('earthTb').innerHTML=ed.map(r=>`<tr>
+      <td>${r.month}</td><td>${r.wasteType}</td><td class="num">${fmt(r.produced)}</td></tr>`).join('');
+  } else {
+    // Old format: Organic, Plastic, E-Waste, etc. with produced/reused/processed
+    const organic=ed.filter(r=>r.wasteType&&r.wasteType.toLowerCase().includes('organic'));
+    const row=latestOf(organic)||latestOf(ed)||{};
+    document.getElementById('earthKpis').innerHTML=
+      kpiCard('♻️','Produced',fmt(row.produced),'kg — '+(row.month||''),tagHtml(row.status),C.green,0)+
+      kpiCard('🌿','Reused',fmt(row.reused),'kg',row.reuseP?`<span class="tag tag-${row.reuseP>=85?'green':row.reuseP>=70?'amber':'red'}">${pct(row.reuseP)}</span>`:'',C.green,0.04)+
+      kpiCard('🏭','Processed',fmt(row.processed),'kg','','#7ec845',0.08);
+    const latestM=row.month;
+    const mRows=ed.filter(r=>r.month===latestM);
+    mkBar('eaBar',mRows.map(r=>r.wasteType||'—'),[
+      {label:'Produced',data:mRows.map(r=>r.produced||0),backgroundColor:C.amber,borderRadius:3,borderWidth:0},
+      {label:'Reused',data:mRows.map(r=>r.reused||0),backgroundColor:C.green,borderRadius:3,borderWidth:0},
+    ]);
+    const mSummary=Object.values(ed.reduce((acc,r)=>{if(!acc[r.month])acc[r.month]={month:r.month,reuseP:r.reuseP};return acc;},{}));
+    mkLine('eaTrend',mSummary.map(r=>r.month),[
+      {label:'Reuse%',data:mSummary.map(r=>r.reuseP||0),borderColor:C.green,backgroundColor:'rgba(45,255,138,0.07)',fill:true,tension:0.4,pointRadius:3},
+    ]);
+    document.getElementById('earthTblHead').innerHTML='<tr><th>Month</th><th>Waste Type</th><th class="num">Produced kg</th><th class="num">Reused kg</th><th class="num">Processed kg</th><th class="num">Reuse%</th><th>Status</th></tr>';
+    document.getElementById('earthTb').innerHTML=ed.map(r=>`<tr>
+      <td>${r.month}</td><td>${r.wasteType||'—'}</td><td class="num">${fmt(r.produced)}</td>
+      <td class="num">${fmt(r.reused)}</td><td class="num">${fmt(r.processed)}</td>
+      <td class="num">${pct(r.reuseP)}</td><td>${tagHtml(r.status)}</td></tr>`).join('');
+  }
 }
 
 // ── AIR ─────────────────────────────────────────
