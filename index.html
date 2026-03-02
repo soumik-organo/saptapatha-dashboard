@@ -1810,7 +1810,7 @@ function parseNewTemplate(wb,filename){
       else if(a.includes('borewell'))borewell=num(r[1]);
       else if(a.includes('mission'))mb=num(r[1]);
       else if(a.includes('total water')||(a.includes('total')&&a.includes('in')))wtotal=num(r[1]);
-      else if(a.includes('status')&&!wstatus)wstatus=str(r[1]);
+      else if(a.includes('status')&&!wstatus){wstatus=str(r[1]);break;}
     }
     if(month)out.water.push({month:month,borewell:borewell,dugWell1:dw1,dugWell2:dw2,missionBhag:mb,total:wtotal,status:wstatus,_src:'excel'});
 
