@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root{
   --bg:#0b1512;--bg2:#0f1e18;--bg3:#152820;--panel:#1a3028;--panel2:#1e3830;
@@ -70,6 +71,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .btn-github.synced{border-color:rgba(45,255,138,0.5)!important;color:var(--accent);}
 .btn-export{background:transparent;border:1px solid var(--border2)!important;color:var(--text3);}
 .btn-export:hover{border-color:var(--text2)!important;color:var(--text2);}
+.img-menu-item{padding:9px 14px;cursor:pointer;font-size:11px;font-family:var(--mono);color:var(--text2);transition:background 0.15s;}
+.img-menu-item:hover{background:var(--panel2);}
 
 /* ── GitHub / Export / Import modal ── */
 .gh-modal{display:none;position:fixed;inset:0;background:rgba(11,21,18,0.92);z-index:2000;align-items:center;justify-content:center;}
@@ -434,6 +437,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
         <div class="file-badge" id="fileBadge">Manual Data</div>
         <div class="period-badge" id="periodBadge">2026</div>
         <button class="header-btn btn-export" onclick="exportJSON()" title="Export data as JSON">⬇️ Export</button>
+        <div class="img-export-wrap" style="position:relative;display:inline-block">
+          <button class="header-btn btn-export" onclick="toggleImgMenu(event)" title="Save dashboard as image">📷 Image</button>
+          <div id="imgMenu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--panel);border:1px solid var(--border2);border-radius:8px;overflow:hidden;z-index:9999;min-width:150px;box-shadow:0 8px 24px rgba(0,0,0,0.4)">
+            <div class="img-menu-item" onclick="captureScreenshot('png')">🖼️ PNG — Full quality</div>
+            <div class="img-menu-item" onclick="captureScreenshot('jpg')">📄 JPG — Smaller file</div>
+          </div>
+        </div>
         <label class="header-btn btn-export" style="cursor:pointer;" title="Import JSON backup">
           ⬆️ Import <input type="file" accept=".json" style="display:none" onchange="importJSON(this)">
         </label>
@@ -1414,6 +1424,47 @@ async function loadFromStorage() {
     const cachedD = localStorage.getItem('saptapatha-excel-D');
     if(cachedD) Object.assign(D, JSON.parse(cachedD));
   } catch(e){}
+}
+
+// ════════════════════════════════════
+//  SCREENSHOT (PNG / JPG)
+// ════════════════════════════════════
+function toggleImgMenu(e){
+  e.stopPropagation();
+  const m=document.getElementById('imgMenu');
+  m.style.display=m.style.display==='none'?'block':'none';
+}
+document.addEventListener('click',()=>{
+  const m=document.getElementById('imgMenu');
+  if(m) m.style.display='none';
+});
+async function captureScreenshot(fmt){
+  document.getElementById('imgMenu').style.display='none';
+  toast('📷 Capturing…');
+  const el=document.getElementById('dashboard');
+  try{
+    const canvas=await html2canvas(el,{
+      backgroundColor:'#0b1512',
+      scale:2,
+      useCORS:true,
+      logging:false,
+      scrollX:0,
+      scrollY:-window.scrollY
+    });
+    const mime=fmt==='jpg'?'image/jpeg':'image/png';
+    const ext=fmt==='jpg'?'jpg':'png';
+    const url=canvas.toDataURL(mime,fmt==='jpg'?0.92:undefined);
+    const a=document.createElement('a');
+    const month=document.getElementById('periodBadge').textContent||'dashboard';
+    const page=(document.querySelector('.nav-tab.active')||{}).textContent||'';
+    const pageSlug=page.replace(/[^a-zA-Z]/g,'').toLowerCase()||'dashboard';
+    a.download=`saptapatha-${pageSlug}-${month}.${ext}`;
+    a.href=url;
+    a.click();
+    toast(`✅ Saved as ${ext.toUpperCase()}`);
+  }catch(err){
+    toast('❌ Screenshot failed: '+err.message,true);
+  }
 }
 
 // ════════════════════════════════════
