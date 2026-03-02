@@ -8,6 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{
   --bg:#0b1512;--bg2:#0f1e18;--bg3:#152820;--panel:#1a3028;--panel2:#1e3830;
@@ -71,8 +72,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .btn-github.synced{border-color:rgba(45,255,138,0.5)!important;color:var(--accent);}
 .btn-export{background:transparent;border:1px solid var(--border2)!important;color:var(--text3);}
 .btn-export:hover{border-color:var(--text2)!important;color:var(--text2);}
-.img-menu-item{padding:9px 14px;cursor:pointer;font-size:11px;font-family:var(--mono);color:var(--text2);transition:background 0.15s;}
-.img-menu-item:hover{background:var(--panel2);}
+
 
 /* ── GitHub / Export / Import modal ── */
 .gh-modal{display:none;position:fixed;inset:0;background:rgba(11,21,18,0.92);z-index:2000;align-items:center;justify-content:center;}
@@ -437,13 +437,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
         <div class="file-badge" id="fileBadge">Manual Data</div>
         <div class="period-badge" id="periodBadge">2026</div>
         <button class="header-btn btn-export" onclick="exportJSON()" title="Export data as JSON">⬇️ Export</button>
-        <div class="img-export-wrap" style="position:relative;display:inline-block">
-          <button class="header-btn btn-export" onclick="toggleImgMenu(event)" title="Save dashboard as image">📷 Image</button>
-          <div id="imgMenu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--panel);border:1px solid var(--border2);border-radius:8px;overflow:hidden;z-index:9999;min-width:150px;box-shadow:0 8px 24px rgba(0,0,0,0.4)">
-            <div class="img-menu-item" onclick="captureScreenshot('png')">🖼️ PNG — Full quality</div>
-            <div class="img-menu-item" onclick="captureScreenshot('jpg')">📄 JPG — Smaller file</div>
-          </div>
-        </div>
+        <button class="header-btn btn-export" onclick="exportPDF()" title="Export Executive Dashboard as PDF">📄 PDF</button>
+
         <label class="header-btn btn-export" style="cursor:pointer;" title="Import JSON backup">
           ⬆️ Import <input type="file" accept=".json" style="display:none" onchange="importJSON(this)">
         </label>
@@ -1427,28 +1422,29 @@ async function loadFromStorage() {
 }
 
 // ════════════════════════════════════
-//  SCREENSHOT (PNG / JPG)
+//  PDF EXPORT — EXECUTIVE DASHBOARD
 // ════════════════════════════════════
-function toggleImgMenu(e){
-  e.stopPropagation();
-  const m=document.getElementById('imgMenu');
-  m.style.display=m.style.display==='none'?'block':'none';
-}
-document.addEventListener('click',()=>{
-  const m=document.getElementById('imgMenu');
-  if(m) m.style.display='none';
-});
-async function captureScreenshot(fmt){
-  document.getElementById('imgMenu').style.display='none';
-  toast('📷 Capturing full dashboard…');
-  const el=document.getElementById('dashboard');
-  // Scroll to top so html2canvas starts from the beginning
-  const origScroll=window.scrollY;
+async function exportPDF(){
+  toast('📄 Preparing Executive PDF…');
+
+  // Ensure we are on the executive page
+  const execPage = document.getElementById('page-executive');
+  const wasActive = execPage.classList.contains('active');
+  if(!wasActive){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    execPage.classList.add('active');
+    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.nav-tab')[0].classList.add('active');
+    renderExecutive();
+    await new Promise(r=>setTimeout(r,400));
+  }
+
   window.scrollTo(0,0);
-  // Wait for scroll and any repaints to settle
   await new Promise(r=>setTimeout(r,200));
+
   try{
-    const canvas=await html2canvas(el,{
+    // Capture the full executive page at its natural scroll height
+    const canvas = await html2canvas(execPage,{
       backgroundColor:'#0b1512',
       scale:2,
       useCORS:true,
@@ -1457,26 +1453,53 @@ async function captureScreenshot(fmt){
       scrollY:0,
       x:0,
       y:0,
-      width:el.offsetWidth,
-      height:el.scrollHeight,
+      width:execPage.offsetWidth,
+      height:execPage.scrollHeight,
       windowWidth:window.innerWidth,
-      windowHeight:el.scrollHeight
+      windowHeight:execPage.scrollHeight
     });
-    window.scrollTo(0,origScroll);
-    const mime=fmt==='jpg'?'image/jpeg':'image/png';
-    const ext=fmt==='jpg'?'jpg':'png';
-    const url=canvas.toDataURL(mime,fmt==='jpg'?0.92:undefined);
-    const a=document.createElement('a');
-    const month=document.getElementById('periodBadge').textContent||'dashboard';
-    const page=(document.querySelector('.nav-tab.active')||{}).textContent||'';
-    const pageSlug=page.replace(/[^a-zA-Z]/g,'').toLowerCase()||'dashboard';
-    a.download=`saptapatha-${pageSlug}-${month}.${ext}`;
-    a.href=url;
-    a.click();
-    toast(`✅ Saved as ${ext.toUpperCase()}`);
+
+    const imgData = canvas.toDataURL('image/png');
+    const {jsPDF} = window.jspdf;
+
+    // Landscape A4: 297mm × 210mm
+    const pdf = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+    const pgW = pdf.internal.pageSize.getWidth();   // 297
+    const pgH = pdf.internal.pageSize.getHeight();  // 210
+
+    // Scale image to fit page width
+    const imgW = pgW;
+    const imgH = (canvas.height / canvas.width) * pgW;
+
+    if(imgH <= pgH){
+      // Fits on one page
+      pdf.addImage(imgData,'PNG',0,0,imgW,imgH);
+    } else {
+      // Split into multiple pages
+      const pageHeightPx = (pgH / pgW) * canvas.width;
+      let offsetY = 0;
+      while(offsetY < canvas.height){
+        const sliceH = Math.min(pageHeightPx, canvas.height - offsetY);
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = sliceH;
+        const ctx = pageCanvas.getContext('2d');
+        ctx.fillStyle='#0b1512';
+        ctx.fillRect(0,0,pageCanvas.width,pageCanvas.height);
+        ctx.drawImage(canvas,0,-offsetY);
+        const sliceImg = pageCanvas.toDataURL('image/png');
+        const sliceHmm = (sliceH/canvas.width)*pgW;
+        if(offsetY>0) pdf.addPage();
+        pdf.addImage(sliceImg,'PNG',0,0,imgW,sliceHmm);
+        offsetY += pageHeightPx;
+      }
+    }
+
+    const month = document.getElementById('periodBadge').textContent||'dashboard';
+    pdf.save('saptapatha-executive-'+month+'.pdf');
+    toast('✅ PDF downloaded');
   }catch(err){
-    window.scrollTo(0,origScroll);
-    toast('❌ Screenshot failed: '+err.message,true);
+    toast('❌ PDF failed: '+err.message,true);
   }
 }
 
