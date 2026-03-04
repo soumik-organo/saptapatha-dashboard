@@ -485,7 +485,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
     <!-- EXECUTIVE -->
     <div id="page-executive" class="page active">
-      <div class="section-title">Seven Pillars — Monthly Performance</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:4px">
+        <div class="section-title" style="margin:0">Seven Pillars — Monthly Performance</div>
+        <div class="month-filter" id="execMF" style="margin:0"></div>
+      </div>
       <div class="exec-strand-grid" id="execStrandGrid"></div>
       <div class="section-title">Quick Reference</div>
       <div class="chart-panel">
@@ -4127,15 +4130,19 @@ function renderYearView(){
 
 // ── EXECUTIVE ─────────────────────────────────
 function renderExecutive(){
-  const eRow=latestOf(D.energy),wRow=latestOf(D.water),fRow=latestOf(D.food);
-  const pRow=latestOf(D.people),sRow=latestOf(D.shelter),airRow=latestOf(D.air);
+  const _aEM=[...new Set([...(D.energy||[]),...(D.water||[]),...(D.food||[]),...(D.earth||[]).filter(r=>r.wasteType&&!r.wasteType.startsWith('__')),...(D.air||[]),...(D.people||[]),...(D.shelter||[])].map(r=>r.month).filter(Boolean))].sort();
+  buildMFCustom('execMF',_aEM,'executive',renderExecutive);
+  const selM=selMonth['executive']||_aEM[_aEM.length-1]||'';
+  const rowFor=arr=>(arr||[]).find(r=>r.month===selM)||{};
+  const eRow=rowFor(D.energy),wRow=rowFor(D.water),fRow=rowFor(D.food);
+  const pRow=rowFor(D.people),sRow=rowFor(D.shelter),airRow=rowFor(D.air);
   const _earthEd=(D.earth||[]).filter(r=>r.wasteType&&!r.wasteType.startsWith('__'));
   const _earthNewFmt=_earthEd.some(r=>r.wasteType==='Wet Waste');
+  const latestEM=selM;
+  const earthMRows=_earthEd.filter(r=>r.month===latestEM);
   const earthRow=_earthNewFmt
-    ? latestOf(_earthEd.filter(r=>r.wasteType==='Wet Waste'))||latestOf(_earthEd)||{}
-    : latestOf(_earthEd.filter(r=>r.wasteType==='Organic Waste'))||latestOf(_earthEd)||{};
-  const latestEM=earthRow.month||'';
-  const earthMRows=_earthNewFmt?_earthEd.filter(r=>r.month===latestEM):[];
+    ? earthMRows.find(r=>r.wasteType==='Wet Waste')||earthMRows[0]||{}
+    : earthMRows.find(r=>r.wasteType==='Organic Waste')||earthMRows[0]||{};
   const getEW=t=>earthMRows.find(r=>r.wasteType===t)||{};
   const wet=getEW('Wet Waste'),dry=getEW('Dry Waste'),nonRec=getEW('Non-Recyclable'),rec=getEW('Recyclable');
   const earthTotalKg=(wet.produced||0)+(dry.produced||0)+(nonRec.produced||0)+(rec.produced||0);
@@ -4204,10 +4211,9 @@ function renderExecutive(){
        backgroundColor:[C.blue,C.amber,C.red,'#7ec845'],borderRadius:3,borderWidth:0},
     ]);
   } else {
-    const mRows=_earthEd.filter(r=>r.month===latestEM);
-    mkBar('xeEaBr',mRows.map(r=>r.wasteType||'—'),[
-      {label:'Produced',data:mRows.map(r=>r.produced||0),backgroundColor:C.amber,borderRadius:3,borderWidth:0},
-      {label:'Reused',data:mRows.map(r=>r.reused||0),backgroundColor:C.green,borderRadius:3,borderWidth:0},
+    mkBar('xeEaBr',earthMRows.map(r=>r.wasteType||'—'),[
+      {label:'Produced',data:earthMRows.map(r=>r.produced||0),backgroundColor:C.amber,borderRadius:3,borderWidth:0},
+      {label:'Reused',data:earthMRows.map(r=>r.reused||0),backgroundColor:C.green,borderRadius:3,borderWidth:0},
     ]);
   }
   if(airRow.pmW1||airRow.pmW2||airRow.pmW3||airRow.pmW4){
