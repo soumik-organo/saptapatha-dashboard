@@ -380,6 +380,22 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .dp-accordion-title::before { content:'▶'; font-size:9px; color:var(--text3); transition:transform 0.2s; }
 .dp-accordion[open] .dp-accordion-title::before { transform:rotate(90deg); }
 .dp-accordion>div { padding:0 12px 12px; }
+
+    /* -- This Month view -- */
+    .thismonth-pillar-row{background:var(--card);border-radius:12px;padding:16px 20px;margin-bottom:14px;border-left:4px solid var(--tm-accent,var(--accent));box-shadow:0 2px 8px rgba(0,0,0,.18);}
+    .tm-pillar-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+    .tm-pillar-icon{font-size:1.3rem;}
+    .tm-pillar-name{font-size:1rem;font-weight:700;color:var(--text);}
+    .tm-pillar-month{font-size:.75rem;color:var(--muted);margin-left:auto;}
+    .tm-kpi-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+    .tm-chip{background:var(--bg);border-radius:8px;padding:8px 12px;text-align:center;min-width:90px;}
+    .tm-chip-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+    .tm-chip-val{font-size:1.1rem;font-weight:700;color:var(--text);}
+    .tm-chip-unit{font-size:.65rem;color:var(--muted);}
+    /* -- Year View -- */
+    .year-view-table td:first-child{white-space:nowrap;font-size:.8rem;}
+    .year-view-table td:nth-child(2){color:var(--muted);font-size:.8rem;white-space:nowrap;}
+    .year-view-table tr:nth-child(5n) td{border-bottom:2px solid var(--border);}
 </style>
 </head>
 <body>
@@ -461,6 +477,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
     <button class="nav-tab" onclick="showPage('air',this)" id="tab-air"></button>
     <button class="nav-tab" onclick="showPage('people',this)" id="tab-people"></button>
     <button class="nav-tab" onclick="showPage('shelter',this)" id="tab-shelter"></button>
+    <button class="nav-tab" onclick="showPage('thismonth',this)" id="tab-thismonth">📅 This Month</button>
+    <button class="nav-tab" onclick="showPage('yearview',this)" id="tab-yearview">📈 Year View</button>
   </nav>
 
   <main class="main">
@@ -771,6 +789,23 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
         <th>Month</th><th>Treatment Type</th><th>Location</th><th class="num">Planned</th><th class="num">Actual</th><th class="num">Effectiveness%</th><th class="num">Complaints</th><th>Status</th>
       </tr></thead><tbody id="shPestTb"></tbody></table></div>
     </div>
+
+  <!-- THIS MONTH -->
+  <div id="page-thismonth" class="page">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div class="section-title" id="thisMonthTitle" style="margin:0">Current Month: —</div>
+      <button class="header-btn" onclick="openDrawer()">+ Enter Data</button>
+    </div>
+    <div id="thisMonthGrid"></div>
+  </div>
+
+  <!-- YEAR VIEW -->
+  <div id="page-yearview" class="page">
+    <div class="section-title" id="yearViewTitle">Year Overview</div>
+    <div class="chart-panel" style="overflow-x:auto">
+      <div id="yearViewTable"></div>
+    </div>
+  </div>
 
   </main>
   <footer class="footer">SAPTAPATHA SUSTAINABILITY TRACKER · 7 PILLARS · 182 VILLAS · Drop a new Excel file or use ✏️ Enter Data any time</footer>
@@ -3889,6 +3924,7 @@ function mergeAndRender(filename){
 function renderAll(){
   renderExecutive();renderEnergy();renderWater();renderFood();
   renderEarth();renderAir();renderPeople();renderShelter();
+  renderThisMonth();renderYearView();
 }
 
 // Chart helpers
@@ -3963,6 +3999,129 @@ function progRow(label,val,total,color){
   const p=total>0?Math.round(((val||0)/total)*100):0;
   return`<div class="progress-row"><div class="progress-label">${label}<span>${fmt(val)||'—'} KL (${p}%)</span></div>
     <div class="progress-bg"><div class="progress-fill" style="width:${p}%;background:${color}"></div></div></div>`;
+}
+
+// ── THIS MONTH ───────────────────────────────────────────────
+function renderThisMonth(){
+  const allMonths=[...new Set([
+    ...(D.energy||[]),...(D.water||[]),...(D.food||[]),
+    ...(D.earth||[]).filter(r=>r.wasteType&&!r.wasteType.startsWith('__')),
+    ...(D.air||[]),...(D.people||[]),...(D.shelter||[])
+  ].map(r=>r.month).filter(Boolean))].sort();
+  const latestM=allMonths[allMonths.length-1]||null;
+  const titleEl=document.getElementById('thisMonthTitle');
+  if(titleEl)titleEl.textContent='Current Month: '+(latestM||'—');
+  const grid=document.getElementById('thisMonthGrid');
+  if(!grid)return;
+  if(!latestM){grid.innerHTML='<p style="color:var(--muted);padding:32px">No data loaded yet. Upload an Excel file or enter data manually.</p>';return;}
+  const eRow=D.energy.find(r=>r.month===latestM)||{};
+  const eTot=(eRow.solar||0)+(eRow.eb||0)+(eRow.dg||0)||eRow.total||0;
+  const wRow=D.water.find(r=>r.month===latestM)||{};
+  const wTot=(wRow.dugWell1||0)+(wRow.dugWell2||0)||wRow.total||0;
+  const fRow=D.food.find(r=>r.month===latestM)||{};
+  const fAch=fRow.planned>0?Math.round((fRow.actual/fRow.planned)*100):null;
+  const ed=(D.earth||[]).filter(r=>r.wasteType&&!r.wasteType.startsWith('__')&&r.month===latestM);
+  const isNewEarth=ed.some(r=>r.wasteType==='Wet Waste');
+  let earthTotal=0,earthStatus='';
+  if(isNewEarth){ed.forEach(r=>{earthTotal+=(r.produced||0);});earthStatus=(ed[0]&&ed[0].status)||'';}
+  else{const eOrg=ed.find(r=>r.wasteType&&r.wasteType.toLowerCase().includes('organic'))||ed[0]||{};earthTotal=eOrg.produced||0;earthStatus=eOrg.status||'';}
+  const airRow=D.air.find(r=>r.month===latestM)||{};
+  const pRow=D.people.find(r=>r.month===latestM)||{};
+  const pOcc=pRow.total>0?((pRow.occupied/pRow.total)*100).toFixed(1):'—';
+  const sRow=D.shelter.find(r=>r.month===latestM)||{};
+  const sCp=sRow.planned>0?Math.round((sRow.completed/sRow.planned)*100):0;
+  const band=(icon,name,accent,content)=>
+    `<div class="thismonth-pillar-row" style="--tm-accent:${accent}">
+      <div class="tm-pillar-hdr"><span class="tm-pillar-icon">${icon}</span><span class="tm-pillar-name">${name}</span><span class="tm-pillar-month">${latestM}</span></div>
+      <div class="tm-kpi-row">${content}</div>
+    </div>`;
+  const chip=(label,val,unit)=>
+    `<div class="tm-chip"><div class="tm-chip-label">${label}</div><div class="tm-chip-val">${val}</div><div class="tm-chip-unit">${unit}</div></div>`;
+  grid.innerHTML=
+    band('⚡','Energy',C.yellow,chip('Solar',fmt(eRow.solar),'kWh')+chip('EB',fmt(eRow.eb),'kWh')+chip('DG',fmt(eRow.dg),'kWh')+chip('Total',fmt(eTot),'kWh')+(eRow.status?tagHtml(eRow.status):''))+
+    band('💧','Water',C.blue,chip('Dug Well 1',fmt(wRow.dugWell1),'KL')+chip('Dug Well 2',fmt(wRow.dugWell2),'KL')+chip('Total',fmt(wTot),'KL')+(wRow.status?tagHtml(wRow.status):''))+
+    band('🌱','Food',C.green,chip('Actual',fmt(fRow.actual),'kg')+chip('Planned',fmt(fRow.planned),'kg')+chip('Achievement',fAch!=null?fAch+'%':'—','')+(fRow.status?tagHtml(fRow.status):''))+
+    band('🌍','Earth','#7ec845',chip('Total Waste',fmt(earthTotal),'kg')+(isNewEarth?chip('Categories',ed.length,'types'):chip('Produced',fmt(earthTotal),'kg'))+(earthStatus?tagHtml(earthStatus):''))+
+    band('💨','Air',C.blue,chip('PM2.5',airRow.pm25?Number(airRow.pm25).toFixed(1):'—','μg/m³')+chip('AQI',airRow.aqi?Math.round(airRow.aqi):'—','0–500')+chip('Location',airRow.location||'—','')+(airRow.pm25?airRow.pm25<=35?'<span class="tag tag-green">🟢 Good</span>':'<span class="tag tag-red">🔴 High</span>':''))+
+    band('👥','People',C.purple,chip('Total Villas',fmt(pRow.total),'')+chip('Occupied',fmt(pRow.occupied),'')+chip('Occupancy',pOcc!=='—'?pOcc+'%':'—','')+chip('Footfall',fmt(pRow.footfall),'')+(pRow.status?tagHtml(pRow.status):''))+
+    band('🏠','Shelter',C.orange,chip('Planned',fmt(sRow.planned),'tasks')+chip('Completed',fmt(sRow.completed),'tasks')+chip('Completion',sCp+'%','')+(sRow.status?tagHtml(sRow.status):'')
+    );
+}
+
+// -- YEAR VIEW -------------------------------------------------
+function renderYearView(){
+  const allMonths=[...new Set([
+    ...(D.energy||[]),...(D.water||[]),...(D.food||[]),
+    ...(D.earth||[]).filter(r=>r.wasteType&&!r.wasteType.startsWith('__')),
+    ...(D.air||[]),...(D.people||[]),...(D.shelter||[])
+  ].map(r=>r.month).filter(Boolean))].sort();
+  const titleEl=document.getElementById('yearViewTitle');
+  if(titleEl)titleEl.textContent='Year Overview'+(allMonths.length?' ('+allMonths[0]+' – '+allMonths[allMonths.length-1]+')':'');
+  const container=document.getElementById('yearViewTable');
+  if(!container)return;
+  if(!allMonths.length){container.innerHTML='<p style="color:var(--muted);padding:32px">No data loaded yet.</p>';return;}
+  const ed=(D.earth||[]).filter(r=>r.wasteType&&!r.wasteType.startsWith('__'));
+  const isNewEarth=ed.some(r=>r.wasteType==='Wet Waste');
+  const thCols=allMonths.map(m=>'<th class="num">'+m+'</th>').join('');
+  const hdr='<thead><tr><th>Pillar</th><th>Metric</th>'+thCols+'</tr></thead>';
+  function trow(icon,pillar,metric,vals,isStatus){
+    const cells=allMonths.map(m=>{
+      const val=vals[m];
+      if(isStatus)return'<td>'+tagHtml(val)+'</td>';
+      const disp=(val!=null&&val!==''&&val!=='—')?val:'—';
+      return'<td class="num">'+disp+'</td>';
+    }).join('');
+    return'<tr><td><strong>'+(icon?icon+' '+pillar:'')+'</strong></td><td>'+metric+'</td>'+cells+'</tr>';
+  }
+  const eMap={},wMap={},fMap={},eaMap={},airMap={},pMap={},sMap={};
+  allMonths.forEach(m=>{
+    const eRow=D.energy.find(r=>r.month===m)||{};
+    const eT=(eRow.solar||0)+(eRow.eb||0)+(eRow.dg||0)||eRow.total||null;
+    eMap[m]={solar:fmt(eRow.solar),eb:fmt(eRow.eb),dg:fmt(eRow.dg),total:fmt(eT),status:eRow.status||''};
+    const wRow=D.water.find(r=>r.month===m)||{};
+    const wT=(wRow.dugWell1||0)+(wRow.dugWell2||0)||wRow.total||null;
+    wMap[m]={dw1:fmt(wRow.dugWell1),dw2:fmt(wRow.dugWell2),total:fmt(wT),status:wRow.status||''};
+    const fRow=D.food.find(r=>r.month===m)||{};
+    fMap[m]={actual:fmt(fRow.actual),planned:fmt(fRow.planned),ach:fRow.planned>0?Math.round((fRow.actual/fRow.planned)*100)+'%':null,status:fRow.status||''};
+    const mEd=ed.filter(r=>r.month===m);
+    if(isNewEarth){let tot=0;mEd.forEach(r=>{tot+=(r.produced||0);});const recR=mEd.find(r=>r.wasteType==='Recyclable')||{};eaMap[m]={total:tot?fmt(tot):null,reuse:tot>0?Math.round(((recR.produced||0)/tot)*100)+'%':null,status:(mEd[0]&&mEd[0].status)||''};}
+    else{const org=mEd.find(r=>r.wasteType&&r.wasteType.toLowerCase().includes('organic'))||mEd[0]||{};eaMap[m]={total:fmt(org.produced),reuse:pct(org.reuseP),status:org.status||''};}
+    const airRow=D.air.find(r=>r.month===m)||{};
+    airMap[m]={pm25:airRow.pm25?Number(airRow.pm25).toFixed(1):null,aqi:airRow.aqi?Math.round(airRow.aqi):null,status:airRow.status||''};
+    const pRow=D.people.find(r=>r.month===m)||{};
+    pMap[m]={occupied:fmt(pRow.occupied),occ:pRow.total>0?((pRow.occupied/pRow.total)*100).toFixed(1)+'%':null,footfall:fmt(pRow.footfall),status:pRow.status||''};
+    const sRow=D.shelter.find(r=>r.month===m)||{};
+    sMap[m]={completed:fmt(sRow.completed),cp:sRow.planned>0?Math.round((sRow.completed/sRow.planned)*100)+'%':null,status:sRow.status||''};
+  });
+  const tbody='<tbody>'+
+    trow('⚡','Energy','Solar kWh',Object.fromEntries(allMonths.map(m=>[m,eMap[m].solar])))+
+    trow('','','EB kWh',Object.fromEntries(allMonths.map(m=>[m,eMap[m].eb])))+
+    trow('','','DG kWh',Object.fromEntries(allMonths.map(m=>[m,eMap[m].dg])))+
+    trow('','','Total kWh',Object.fromEntries(allMonths.map(m=>[m,eMap[m].total])))+
+    trow('','','Status',Object.fromEntries(allMonths.map(m=>[m,eMap[m].status])),true)+
+    trow('💧','Water','DW1 KL',Object.fromEntries(allMonths.map(m=>[m,wMap[m].dw1])))+
+    trow('','','DW2 KL',Object.fromEntries(allMonths.map(m=>[m,wMap[m].dw2])))+
+    trow('','','Total KL',Object.fromEntries(allMonths.map(m=>[m,wMap[m].total])))+
+    trow('','','Status',Object.fromEntries(allMonths.map(m=>[m,wMap[m].status])),true)+
+    trow('🌱','Food','Actual kg',Object.fromEntries(allMonths.map(m=>[m,fMap[m].actual])))+
+    trow('','','Planned kg',Object.fromEntries(allMonths.map(m=>[m,fMap[m].planned])))+
+    trow('','','Achievement',Object.fromEntries(allMonths.map(m=>[m,fMap[m].ach])))+
+    trow('','','Status',Object.fromEntries(allMonths.map(m=>[m,fMap[m].status])),true)+
+    trow('🌍','Earth','Total Waste kg',Object.fromEntries(allMonths.map(m=>[m,eaMap[m].total])))+
+    trow('','','Reuse/Recycle%',Object.fromEntries(allMonths.map(m=>[m,eaMap[m].reuse])))+
+    trow('','','Status',Object.fromEntries(allMonths.map(m=>[m,eaMap[m].status])),true)+
+    trow('💨','Air','PM2.5 μg/m³',Object.fromEntries(allMonths.map(m=>[m,airMap[m].pm25])))+
+    trow('','','AQI',Object.fromEntries(allMonths.map(m=>[m,airMap[m].aqi])))+
+    trow('','','Status',Object.fromEntries(allMonths.map(m=>[m,airMap[m].status])),true)+
+    trow('👥','People','Occupied Villas',Object.fromEntries(allMonths.map(m=>[m,pMap[m].occupied])))+
+    trow('','','Occupancy%',Object.fromEntries(allMonths.map(m=>[m,pMap[m].occ])))+
+    trow('','','Footfall',Object.fromEntries(allMonths.map(m=>[m,pMap[m].footfall])))+
+    trow('','','Status',Object.fromEntries(allMonths.map(m=>[m,pMap[m].status])),true)+
+    trow('🏠','Shelter','Completed Tasks',Object.fromEntries(allMonths.map(m=>[m,sMap[m].completed])))+
+    trow('','','Completion%',Object.fromEntries(allMonths.map(m=>[m,sMap[m].cp])))+
+    trow('','','Status',Object.fromEntries(allMonths.map(m=>[m,sMap[m].status])),true)+
+    '</tbody>';
+  container.innerHTML='<table class="data-table year-view-table">'+hdr+tbody+'</table>';
 }
 
 // ── EXECUTIVE ─────────────────────────────────
@@ -4675,7 +4834,7 @@ function showPage(id,el){
   if(el)el.classList.add('active');
 }
 function goPage(name){
-  const idx=['executive','energy','water','food','earth','air','people','shelter'].indexOf(name);
+  const idx=['executive','energy','water','food','earth','air','people','shelter','thismonth','yearview'].indexOf(name);
   if(idx>=0){const tabs=document.querySelectorAll('.nav-tab');showPage(name,tabs[idx]);}
 }
 
