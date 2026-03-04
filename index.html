@@ -2759,9 +2759,10 @@ function mergeExcelData(xlData) {
   for(const key of ['energy','water','food','earth','air','people','shelter']){
     if(!xlData[key]) continue;
     const xl=xlData[key].filter(r=>r.month&&r.month.match(/\d{4}/));
-    const manual=(D[key]||[]).filter(r=>r._src==='manual');
     const excelMonths=new Set(xl.map(r=>r.month));
-    D[key]=[...xl,...manual.filter(r=>!excelMonths.has(r.month))];
+    const prevExcel=(D[key]||[]).filter(r=>r._src==='excel'&&!excelMonths.has(r.month));
+    const manual=(D[key]||[]).filter(r=>r._src==='manual'&&!excelMonths.has(r.month));
+    D[key]=[...xl,...prevExcel,...manual];
     D[key].sort((a,b)=>a.month.localeCompare(b.month));
   }
   // Non-month-keyed arrays — just copy directly from excel
