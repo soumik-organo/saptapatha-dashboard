@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "pushedAt": "2026-03-02T10:43:34.839Z",
+  "pushedAt": "2026-03-04T10:28:02.110Z",
   "manualEntries": [],
   "excelData": {
     "energy": [
@@ -12,6 +12,17 @@
         "total": 4908.099999999999,
         "villas": 4908.1,
         "common": 5245,
+        "status": "Green",
+        "_src": "excel"
+      },
+      {
+        "month": "Jan-2026",
+        "solar": 21872.989999999998,
+        "eb": 5006,
+        "dg": 361,
+        "total": 5794,
+        "villas": 5794.09,
+        "common": 21084.93,
         "status": "Green",
         "_src": "excel"
       }
@@ -26,6 +37,16 @@
         "total": 4917,
         "status": "Amber",
         "_src": "excel"
+      },
+      {
+        "month": "Jan-2026",
+        "borewell": null,
+        "dugWell1": 10167,
+        "dugWell2": 0,
+        "missionBhag": null,
+        "total": 10167,
+        "status": "Amber",
+        "_src": "excel"
       }
     ],
     "food": [
@@ -34,6 +55,15 @@
         "planned": 1887.6999999999996,
         "actual": 1404.9099999999999,
         "variance": -482.78999999999974,
+        "families": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Jan-2026",
+        "planned": 1718.6999999999996,
+        "actual": 1325.9999999999998,
+        "variance": -392.6999999999998,
         "families": null,
         "status": "",
         "_src": "excel"
@@ -76,11 +106,66 @@
         "paperKg": 0,
         "electric": 0,
         "_src": "excel"
+      },
+      {
+        "month": "Jan-2026",
+        "wasteType": "Wet Waste",
+        "produced": 885,
+        "sdpWet": 725,
+        "ofsWet": 23,
+        "villasWet": 89,
+        "siteOffWet": 48,
+        "_src": "excel"
+      },
+      {
+        "month": "Jan-2026",
+        "wasteType": "Dry Waste",
+        "produced": 410.6,
+        "sdpDry": 65.6,
+        "ofsDry": 9,
+        "villasDry": 74,
+        "commonDry": 262,
+        "_src": "excel"
+      },
+      {
+        "month": "Jan-2026",
+        "wasteType": "Non-Recyclable",
+        "produced": 0,
+        "_src": "excel"
+      },
+      {
+        "month": "Jan-2026",
+        "wasteType": "Recyclable",
+        "produced": 0,
+        "cardboards": 0,
+        "ironKg": 0,
+        "plasticKg": 0,
+        "paperKg": 0,
+        "electric": 0,
+        "_src": "excel"
       }
     ],
     "air": [
       {
         "month": "Feb-2026",
+        "pm25": 30,
+        "pmW1": 22,
+        "pmW2": 32,
+        "pmW3": 34,
+        "pmW4": 32,
+        "pm10": null,
+        "aqi": 22.75,
+        "aqiW1": 22,
+        "aqiW2": 23,
+        "aqiW3": 26,
+        "aqiW4": 20,
+        "co2": null,
+        "location": "RH",
+        "status": "Green",
+        "_src": "excel"
+      },
+      {
+        "month": "Jan-2026",
         "pm25": 30,
         "pmW1": 22,
         "pmW2": 32,
@@ -109,11 +194,30 @@
         "events": 0,
         "status": "",
         "_src": "excel"
+      },
+      {
+        "month": "Jan-2026",
+        "total": 79,
+        "occupied": 38,
+        "occupancyPct": 48.10126582278481,
+        "plannedFootfall": null,
+        "actualFootfall": 673,
+        "events": 0,
+        "status": "",
+        "_src": "excel"
       }
     ],
     "shelter": [
       {
         "month": "Feb-2026",
+        "planned": null,
+        "completed": null,
+        "completionPct": null,
+        "status": "",
+        "_src": "excel"
+      },
+      {
+        "month": "Jan-2026",
         "planned": null,
         "completed": null,
         "completionPct": null,
