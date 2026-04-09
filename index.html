@@ -526,16 +526,24 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
         <thead><tr><th>Month</th><th class="num">RP</th><th class="num">MRP</th><th class="num">GP</th><th class="num">VP</th><th class="num">MDP</th><th class="num">CP</th><th class="num">CHP</th><th class="num">SP</th><th class="num">TP</th></tr></thead>
         <tbody id="clusterTb"></tbody></table></div>
 
-      <div class="section-title">Table 4 — Daily Power Consumption (Jan 2026)</div>
-      <div class="chart-grid" style="margin-bottom:16px">
-        <div class="chart-panel"><div class="chart-title">Daily EB Consumption <span>kWh per day</span></div>
-          <div class="chart-wrap tall"><canvas id="dailyEbBar"></canvas></div></div>
-        <div class="chart-panel"><div class="chart-title">Daily Solar Generation <span>kWh per day</span></div>
-          <div class="chart-wrap tall"><canvas id="dailySolarBar"></canvas></div></div>
-      </div>
+      <div class="section-title">Table 4 — Daily Power Consumption</div>
+      <div class="chart-panel" style="margin-bottom:16px"><div class="chart-title">Daily Solar Generation <span>kWh per day</span></div>
+        <div class="chart-wrap tall"><canvas id="dailySolarBar"></canvas></div></div>
       <div class="chart-panel" style="margin-bottom:24px"><table class="data-table" id="dailyEnergyTbl">
-        <thead><tr><th>Date</th><th class="num">EB (kWh)</th><th class="num">Solar (kWh)</th><th class="num">Combined</th></tr></thead>
+        <thead><tr><th>Date</th><th class="num">Total Consumption (kWh)</th></tr></thead>
         <tbody id="dailyTb"></tbody></table></div>
+
+      <div class="section-title">Table 5 — Villa-wise Energy Consumption</div>
+      <div class="chart-grid" style="margin-bottom:16px">
+        <div class="chart-panel"><div class="chart-title">Villa Consumption by Cluster <span id="villaMonthLbl"></span></div>
+          <div class="chart-wrap tall"><canvas id="villaEnergyBar"></canvas></div></div>
+        <div class="chart-panel"><div class="chart-title">Cluster Share <span>% of total consumption</span></div>
+          <div class="chart-wrap donut-center"><canvas id="villaEnergyDonut"></canvas>
+            <div class="donut-label"><div class="big" id="villaEnergyTot">—</div><div class="small">kWh</div></div></div></div>
+      </div>
+      <div class="chart-panel" style="margin-bottom:24px"><table class="data-table">
+        <thead><tr><th>Villa</th><th class="num">Opening (kWh)</th><th class="num">Closing (kWh)</th><th class="num">Consumption (kWh)</th></tr></thead>
+        <tbody id="villaTb"></tbody></table></div>
     </div>
 
     <!-- WATER -->
@@ -942,10 +950,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
       </div>
 
       <div class="field-group">
-        <div class="field-group-title">📅 Daily Power Consumption (kWh per day)</div>
-        <div style="display:grid;grid-template-columns:32px 1fr 1fr;gap:4px 8px;margin-bottom:10px;align-items:center;">
+        <div class="field-group-title">📅 Daily Solar Generation (kWh per day)</div>
+        <div style="display:grid;grid-template-columns:32px 1fr;gap:4px 8px;margin-bottom:10px;align-items:center;">
           <div style="font-size:9px;color:var(--text3);font-family:var(--mono);text-align:center">DAY</div>
-          <div style="font-size:9px;color:var(--blue);font-family:var(--mono);text-align:center">EB kWh</div>
           <div style="font-size:9px;color:var(--amber);font-family:var(--mono);text-align:center">SOLAR kWh</div>
           <div id="dailyInputGrid" style="display:contents"></div>
         </div>
@@ -1405,7 +1412,7 @@ let selMonth={};
 
 // D holds merged data from ALL sources (manual entries + Excel)
 let D={energy:[],water:[],food:[],earth:[],air:[],people:[],shelter:[],
-  energyCluster:[],energyDaily:[],waterConsumption:[],waterQuality:[],
+  energyCluster:[],energyDaily:[],energyVilla:[],waterConsumption:[],waterQuality:[],
   // People-Detailed
   peopleAmenities:[],     // §2 Health & Hygiene PPM per amenity
   peopleHealthLounge:[],  // §3 Health Lounge sessions
@@ -1885,7 +1892,7 @@ function isNewTemplate(wb){
 
 function parseNewTemplate(wb,filename){
   var out={energy:[],water:[],food:[],earth:[],air:[],people:[],shelter:[],
-           energyCluster:[],energyDaily:[],waterConsumption:[],waterQuality:[],
+           energyCluster:[],energyDaily:[],energyVilla:[],waterConsumption:[],waterQuality:[],
            peopleAmenities:[],peopleHealthLounge:[],peoplePersonalSvc:[],peopleSocial:[],
            peopleQuality:[],peopleSecurity:[],peopleInternet:[],peopleUpskilling:[],peopleInitiatives:[],
            shelterCommunity:[],shelterMaintenance:[],shelterCivil:[],shelterLandscape:[],shelterPest:[]};
@@ -2378,13 +2385,43 @@ function parseNewTemplate(wb,filename){
     });
   }
 
+  // ── VILLA ENERGY ──
+  var vSn=wb.SheetNames.find(function(n){return n.toLowerCase().includes('villa energy')||n.toLowerCase().includes('villa energy');});
+  if(vSn&&month){
+    var vRaw=XLSX.utils.sheet_to_json(wb.Sheets[vSn],{defval:null,raw:true,header:1});
+    // Find header row: contains "Villa" and "Consumption"
+    var vHdrRow=-1;
+    for(var i=0;i<vRaw.length;i++){
+      var r=vRaw[i]; if(!r)continue;
+      var hasVilla=r.some(function(v){return str(v).toLowerCase().includes('villa');});
+      var hasConsump=r.some(function(v){return str(v).toLowerCase().includes('consump');});
+      if(hasVilla&&hasConsump){vHdrRow=i;break;}
+    }
+    if(vHdrRow>=0){
+      for(var i=vHdrRow+1;i<vRaw.length;i++){
+        var r=vRaw[i]; if(!r)continue;
+        // 3 groups of 4 columns: Villa NO | Opening | Closing | Consumption
+        for(var grp=0;grp<3;grp++){
+          var base=grp*4;
+          var villaName=str(r[base]);
+          if(!villaName||villaName.toLowerCase().includes('villa')||villaName.toLowerCase().includes('total'))continue;
+          var opening=num(r[base+1]),closing=num(r[base+2]),consumption=num(r[base+3]);
+          if(!villaName||(opening==null&&closing==null&&consumption==null))continue;
+          var clMatch=villaName.match(/^([A-Z]+)/);
+          var cluster=clMatch?clMatch[1]:'';
+          out.energyVilla.push({month:month,villa:villaName,cluster:cluster,opening:opening,closing:closing,consumption:consumption,_src:'excel'});
+        }
+      }
+    }
+  }
+
   return out;
 }
 
 function parseWorkbook(wb,filename){
   if(isNewTemplate(wb))return parseNewTemplate(wb,filename);
   const out={energy:[],water:[],food:[],earth:[],air:[],people:[],shelter:[],
-             energyCluster:[],energyDaily:[],waterConsumption:[],waterQuality:[]};
+             energyCluster:[],energyDaily:[],energyVilla:[],waterConsumption:[],waterQuality:[]};
 
   // ── ENERGY DASHBOARD ──────────────────────────
   const e=parseSheet(wb,['⚡ Energy Dashboard','Energy Dashboard']);
@@ -2771,6 +2808,7 @@ function mergeExcelData(xlData) {
   // Non-month-keyed arrays — just copy directly from excel
   if(xlData.energyCluster) D.energyCluster=xlData.energyCluster;
   if(xlData.energyDaily)   D.energyDaily=xlData.energyDaily;
+  if(xlData.energyVilla)   D.energyVilla=xlData.energyVilla;
   if(xlData.waterConsumption) D.waterConsumption=xlData.waterConsumption;
   if(xlData.waterQuality)  D.waterQuality=xlData.waterQuality;
   // People-Detailed sub-arrays
@@ -2797,7 +2835,7 @@ async function confirmClearData(){
   if(!clrExcel && !clrManual){ closeClearModal(); return; }
 
   const allKeys=['energy','water','food','earth','air','people','shelter',
-                 'energyCluster','energyDaily','waterConsumption','waterQuality',
+                 'energyCluster','energyDaily','energyVilla','waterConsumption','waterQuality',
                  'peopleAmenities','peopleHealthLounge','peoplePersonalSvc','peopleSocial',
                  'peopleQuality','peopleSecurity','peopleInternet','peopleUpskilling','peopleInitiatives',
                  'shelterCommunity','shelterMaintenance','shelterCivil','shelterLandscape','shelterPest'];
@@ -2903,7 +2941,7 @@ function loadMonthIntoForm(month){
   updateClusterCalc();
   // Daily
   buildDailyGrid();
-  for(let d=1;d<=31;d++){setF('f_eb_d'+d,entry.energy?.daily?.[d]?.eb);setF('f_sol_d'+d,entry.energy?.daily?.[d]?.solar);}
+  for(let d=1;d<=31;d++){setF('f_sol_d'+d,entry.energy?.daily?.[d]?.solar);}
   updateDailyCalc();
   // Water sources
   setF('f_dw1',entry.water?.dugWell1);setF('f_borewell',entry.water?.borewell);
@@ -3169,7 +3207,7 @@ function clearForm(){
   // Cluster
   ['RP','MRP','GP','VP','MDP','CP','CHP','SP','TP'].forEach(c=>{const el=document.getElementById('f_cl_'+c);if(el)el.value='';});
   // Daily energy
-  for(let d=1;d<=31;d++){['f_eb_d'+d,'f_sol_d'+d].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});}
+  for(let d=1;d<=31;d++){const el=document.getElementById('f_sol_d'+d);if(el)el.value='';}
   // Water consumption balance
   ['villa','irrig','rhive','goo','pool','land'].forEach(c=>{
     ['p','a'].forEach(s=>{const el=document.getElementById('f_wc_'+c+'_'+s);if(el)el.value='';});
@@ -3243,7 +3281,6 @@ function buildDailyGrid(){
   let html='';
   for(let d=1;d<=31;d++){
     html+=`<div style="font-size:10px;font-family:var(--mono);color:var(--text3);text-align:center;padding-top:4px">${d}</div>`;
-    html+=`<input type="number" id="f_eb_d${d}" placeholder="—" style="${inputStyle}" oninput="updateDailyCalc()">`;
     html+=`<input type="number" id="f_sol_d${d}" placeholder="—" style="${inputStyle.replace(C.blue,'var(--amber)')}" oninput="updateDailyCalc()">`;
   }
   grid.innerHTML=html;
@@ -3261,16 +3298,13 @@ function updateClusterCalc(){
 }
 
 function updateDailyCalc(){
-  let ebSum=0,solSum=0,ebCount=0,solCount=0;
+  let solSum=0,solCount=0;
   for(let d=1;d<=31;d++){
-    const eb=parseFloat(document.getElementById('f_eb_d'+d)?.value);
     const sol=parseFloat(document.getElementById('f_sol_d'+d)?.value);
-    if(!isNaN(eb)&&eb>0){ebSum+=eb;ebCount++;}
     if(!isNaN(sol)&&sol>0){solSum+=sol;solCount++;}
   }
-  document.getElementById('dailyCalc').innerHTML=(ebCount+solCount)>0
-    ?`<div class="computed-chip">EB Total <strong>${fmt(ebSum)} kWh</strong> (${ebCount} days)</div>`
-     +`<div class="computed-chip">Solar Total <strong>${fmt(solSum)} kWh</strong> (${solCount} days)</div>`
+  document.getElementById('dailyCalc').innerHTML=solCount>0
+    ?`<div class="computed-chip">Total <strong>${fmt(solSum)} kWh</strong> (${solCount} days)</div>`
     :'';
 }
 
@@ -3409,7 +3443,7 @@ async function saveEntry(){
   const tot=s+eb+dg;
   const clusterNames=['RP','MRP','GP','VP','MDP','CP','CHP','SP','TP'];
   const cluster={}; clusterNames.forEach(c=>{const v=getN('f_cl_'+c);if(v>0)cluster[c]=v;});
-  const daily={}; for(let d=1;d<=31;d++){const eb2=getN('f_eb_d'+d),sol=getN('f_sol_d'+d);if(eb2>0||sol>0)daily[d]={eb:eb2||null,solar:sol||null};}
+  const daily={}; for(let d=1;d<=31;d++){const sol=getN('f_sol_d'+d);if(sol>0)daily[d]={solar:sol};}
 
   // ── Water ──
   const dw1=getN('f_dw1'),bw=getN('f_borewell'),dw2=getN('f_dw2'),mb=getN('f_mb');
@@ -4287,23 +4321,44 @@ function renderEnergy(){
     ? clData.map(r=>`<tr><td>${r.month}</td>${clusters.map(c=>`<td class="num">${fmt(r[c])}</td>`).join('')}</tr>`).join('')
     : `<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:20px">Load the Excel file to see clusterwise data</td></tr>`;
 
-  // ── TABLE 4: Daily ──────────────────────────
+  // ── TABLE 4: Daily Solar Generation ──────────
   const daily=D.energyDaily||[];
   const dayLabels=daily.map(d=>`Day ${d.day}`);
-  mkBar('dailyEbBar',dayLabels,[{
-    label:'EB (kWh)',data:daily.map(d=>d.eb||0),
-    backgroundColor:'rgba(77,184,255,0.7)',borderRadius:3,borderWidth:0
-  }]);
   mkBar('dailySolarBar',dayLabels,[{
-    label:'Solar (kWh)',data:daily.map(d=>d.solar||0),
+    label:'Solar (kWh)',data:daily.map(d=>(d.solar||0)+(d.eb||0)),
     backgroundColor:'rgba(247,201,72,0.75)',borderRadius:3,borderWidth:0
   }]);
   document.getElementById('dailyTb').innerHTML=daily.length
     ? daily.map(d=>{
-        const combined=(d.eb||0)+(d.solar||0);
-        return`<tr><td>${d.day}</td><td class="num">${fmt(d.eb)}</td><td class="num">${fmt(d.solar)}</td><td class="num">${fmt(combined)}</td></tr>`;
+        const total=(d.solar||0)+(d.eb||0);
+        return`<tr><td>${d.day}</td><td class="num">${fmt(total||null)}</td></tr>`;
       }).join('')
-    : `<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:20px">Load the Excel file to see daily data</td></tr>`;
+    : `<tr><td colspan="2" style="text-align:center;color:var(--text3);padding:20px">Load the Excel file to see daily data</td></tr>`;
+
+  // ── TABLE 5: Villa-wise Energy ────────────────
+  const villas=D.energyVilla||[];
+  const clusterNames=['RP','MRP','GP','VP','MDP','CP','CHP','SP','TP'];
+  const clColors=[C.yellow,C.green,C.blue,C.purple,C.amber,C.orange,'#94d1e8','#7ec845','#e87d7d'];
+  // Use latest month in villa data
+  const villaMonths=[...new Set(villas.map(v=>v.month))].sort();
+  const latestVMonth=villaMonths[villaMonths.length-1]||'';
+  const villasForMonth=villas.filter(v=>v.month===latestVMonth);
+  document.getElementById('villaMonthLbl').textContent=latestVMonth;
+  // Aggregate by cluster
+  const clusterTotals={};
+  villasForMonth.forEach(v=>{if(!clusterTotals[v.cluster])clusterTotals[v.cluster]=0;clusterTotals[v.cluster]+=(v.consumption||0);});
+  const activeClusters=clusterNames.filter(c=>clusterTotals[c]>0);
+  const activeColors=activeClusters.map(c=>clColors[clusterNames.indexOf(c)]);
+  const clusterVals=activeClusters.map(c=>clusterTotals[c]);
+  const villaTot=clusterVals.reduce((a,b)=>a+b,0);
+  document.getElementById('villaEnergyTot').textContent=fmt(villaTot)||'—';
+  if(activeClusters.length){
+    mkBar('villaEnergyBar',activeClusters,[{label:'Consumption (kWh)',data:clusterVals,backgroundColor:activeColors,borderRadius:4,borderWidth:0}]);
+    mkDonut('villaEnergyDonut',activeClusters,clusterVals,activeColors);
+  }
+  document.getElementById('villaTb').innerHTML=villasForMonth.length
+    ? villasForMonth.map(v=>`<tr><td>${v.villa}</td><td class="num">${fmt(v.opening)}</td><td class="num">${fmt(v.closing)}</td><td class="num" style="color:var(--accent)">${fmt(v.consumption)}</td></tr>`).join('')
+    : `<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:20px">Upload an Excel file with a "Villa Energy" sheet to see villa-wise data</td></tr>`;
 }
 
 // ── WATER ───────────────────────────────────────
