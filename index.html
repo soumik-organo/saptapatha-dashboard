@@ -565,16 +565,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
         <thead><tr><th>Month</th><th class="num">Borewell</th><th class="num">Dug Well 1</th><th class="num">Dug Well 2</th><th class="num">Mission Bhag.</th><th class="num">Total KL</th><th class="num">Stability%</th><th>Status</th></tr></thead>
         <tbody id="waterTb"></tbody></table></div>
 
-      <div class="section-title">Table 2 — Consumption Balance Sheet (Planned vs Actual)</div>
-      <div class="chart-grid" style="margin-bottom:16px">
-        <div class="chart-panel"><div class="chart-title">Consumption by Category <span id="consumMonthLbl">Jan-2026</span></div>
-          <div class="chart-wrap"><canvas id="consumBar"></canvas></div></div>
-        <div class="chart-panel"><div class="chart-title">Category Split <span>Actual KL</span></div>
-          <div class="chart-wrap donut-center"><canvas id="consumDonut"></canvas>
-            <div class="donut-label"><div class="big" id="consumTot">—</div><div class="small">KL</div></div></div></div>
-      </div>
+      <div class="section-title">Table 2 — Consumption Balance Sheet (Actual)</div>
+      <div class="chart-panel" style="margin-bottom:16px"><div class="chart-title">Consumption by Category <span id="consumMonthLbl">Jan-2026</span></div>
+        <div class="chart-wrap"><canvas id="consumBar"></canvas></div></div>
       <div class="chart-panel" style="margin-bottom:24px"><table class="data-table">
-        <thead><tr><th>Month</th><th>Category</th><th>Location</th><th class="num">Planned (KL)</th><th class="num">Actual (KL)</th><th class="num">Variance (KL)</th><th class="num">Variance %</th><th>Status</th></tr></thead>
+        <thead><tr><th>Month</th><th>Category</th><th>Location</th><th class="num">Actual (KL)</th><th class="num">Variance (KL)</th><th class="num">Variance %</th><th>Status</th></tr></thead>
         <tbody id="consumTb"></tbody></table></div>
 
       <div class="section-title">Table 3 — Water Quality Report</div>
@@ -4398,23 +4393,20 @@ function renderWater(){
   const catLabels=wcRows.map(r=>r.location||r.category||'—');
   const catActuals=wcRows.map(r=>r.actual||0);
   const catTotal=catActuals.reduce((a,b)=>a+b,0);
-  document.getElementById('consumTot').textContent=fmt(catTotal);
   mkBar('consumBar',catLabels,[
-    {label:'Planned (KL)',data:wcRows.map(r=>r.planned||0),backgroundColor:C.grey,borderRadius:3,borderWidth:0},
     {label:'Actual (KL)',data:catActuals,backgroundColor:wcRows.map(r=>catColors[r.category]||C.blue),borderRadius:3,borderWidth:0},
   ]);
-  mkDonut('consumDonut',catLabels,catActuals,wcRows.map(r=>catColors[r.category]||C.blue));
   document.getElementById('consumTb').innerHTML=wc.length
     ? wc.map(r=>{
         const vSign=(r.variance||0)>=0;
         return`<tr>
           <td>${r.month}</td><td>${r.category||'—'}</td><td>${r.location||'—'}</td>
-          <td class="num">${fmt(r.planned)}</td><td class="num">${fmt(r.actual)}</td>
+          <td class="num">${fmt(r.actual)}</td>
           <td class="num" style="color:${vSign?C.green:C.amber}">${fmt(r.variance)}</td>
           <td class="num" style="color:${vSign?C.green:C.amber}">${r.variancePct!=null?Number(r.variancePct*100).toFixed(0)+'%':'—'}</td>
           <td>${tagHtml(r.status)}</td></tr>`;
       }).join('')
-    : `<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:20px">Load the Excel file to see consumption data</td></tr>`;
+    : `<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px">Load the Excel file to see consumption data</td></tr>`;
 
   // ── TABLE 3: Water Quality ────────────────────
   const wq=D.waterQuality||[];
