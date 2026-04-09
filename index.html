@@ -652,80 +652,51 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
         <thead><tr><th>Month</th><th class="num">Total</th><th class="num">Occupied</th><th class="num">Occ%</th><th class="num">Planned FT</th><th class="num">Actual FT</th><th>Status</th></tr></thead>
         <tbody id="peopleTb"></tbody></table></div>
 
-      <!-- §2 Amenities Health & Hygiene -->
-      <div class="section-title" style="margin-top:20px">🏥 Health &amp; Hygiene — Amenities PPM</div>
-      <div class="month-filter" id="pAmenMF"></div>
-      <div class="chart-grid">
-        <div class="chart-panel"><div class="chart-title">Compliance % by Amenity</div><div class="chart-wrap"><canvas id="pAmenBar"></canvas></div></div>
-        <div class="chart-panel"><div class="chart-title">Issues Found vs Resolved</div><div class="chart-wrap"><canvas id="pAmenIssue"></canvas></div></div>
-      </div>
-      <div class="chart-panel"><table class="data-table"><thead><tr>
-        <th>Month</th><th>Amenity/Area</th><th class="num">Planned</th><th class="num">Actual</th><th class="num">Issues</th><th class="num">Resolved</th><th class="num">Compliance%</th><th>Status</th>
-      </tr></thead><tbody id="pAmenTb"></tbody></table></div>
-
-      <!-- §3 Health Lounge -->
-      <div class="section-title" style="margin-top:20px">🧘 Health Lounge — Slow Down Place</div>
-      <div class="month-filter" id="pLoungeMF"></div>
-      <div class="chart-grid">
-        <div class="chart-panel"><div class="chart-title">Sessions: Planned vs Actual</div><div class="chart-wrap"><canvas id="pLoungeBar"></canvas></div></div>
-        <div class="chart-panel"><div class="chart-title">Satisfaction % by Service</div><div class="chart-wrap"><canvas id="pLoungeSat"></canvas></div></div>
-      </div>
-      <div class="chart-panel"><table class="data-table"><thead><tr>
-        <th>Month</th><th>Service</th><th class="num">Planned</th><th class="num">Actual</th><th class="num">Participants</th><th class="num">Satisfaction%</th><th class="num">Achievement%</th><th>Status</th>
-      </tr></thead><tbody id="pLoungeTb"></tbody></table></div>
-
-      <!-- §4 Personal Services -->
-      <div class="section-title" style="margin-top:20px">💆 Personal Services Bookings</div>
+      <!-- §1 Personal Services -->
+      <div class="section-title" style="margin-top:20px">💆 Personal Services — Slow Down Place</div>
       <div class="month-filter" id="pSvcMF"></div>
+      <div class="chart-panel" style="margin-bottom:16px"><div class="chart-title">Bookings: Planned vs Actual <span id="pSvcMonthLbl"></span></div>
+        <div class="chart-wrap"><canvas id="pSvcBar"></canvas></div></div>
       <div class="chart-panel"><table class="data-table"><thead><tr>
-        <th>Month</th><th>Service Type</th><th class="num">Planned</th><th class="num">Actual</th><th class="num">Utilization%</th><th class="num">Avg Duration(min)</th><th class="num">Satisfaction%</th><th>Status</th>
+        <th>Month</th><th>Service</th><th class="num">Planned</th><th class="num">Actual</th><th class="num">Avg Duration (min)</th>
       </tr></thead><tbody id="pSvcTb"></tbody></table></div>
 
-      <!-- §5 Social Engagement -->
-      <div class="section-title" style="margin-top:20px">🎉 Social Engagement Calendar</div>
+      <!-- §2 Social Engagement -->
+      <div class="section-title" style="margin-top:20px">🎉 Social Engagement — Slow Down Place</div>
       <div class="month-filter" id="pSocialMF"></div>
-      <div class="chart-grid">
-        <div class="chart-panel"><div class="chart-title">Events: Planned vs Actual</div><div class="chart-wrap"><canvas id="pSocialBar"></canvas></div></div>
-        <div class="chart-panel"><div class="chart-title">Effectiveness % Trend</div><div class="chart-wrap"><canvas id="pSocialEff"></canvas></div></div>
-      </div>
+      <div class="chart-panel" style="margin-bottom:16px"><div class="chart-title">Events: Planned vs Actual <span id="pSocialMonthLbl"></span></div>
+        <div class="chart-wrap"><canvas id="pSocialBar"></canvas></div></div>
       <div class="chart-panel"><table class="data-table"><thead><tr>
-        <th>Month</th><th>Event Type</th><th class="num">Planned</th><th class="num">Actual</th><th class="num">Attendance</th><th class="num">Target</th><th class="num">Effectiveness%</th><th>Status</th>
+        <th>Month</th><th>Event Type</th><th class="num">Planned</th><th class="num">Actual</th><th class="num">Attendance</th>
       </tr></thead><tbody id="pSocialTb"></tbody></table></div>
 
-      <!-- §6 Quality Reports -->
-      <div class="section-title" style="margin-top:20px">⭐ Quality Reports</div>
-      <div class="month-filter" id="pQualMF"></div>
-      <div class="chart-panel"><table class="data-table"><thead><tr>
-        <th>Month</th><th>Category</th><th>Service</th><th class="num">Quality%</th><th class="num">Complaints</th><th class="num">Resolved</th><th class="num">Resolution%</th><th>Status</th>
-      </tr></thead><tbody id="pQualTb"></tbody></table></div>
-
-      <!-- §7 Security -->
+      <!-- §3 Security -->
       <div class="section-title" style="margin-top:20px">🔒 Security &amp; Surveillance</div>
       <div class="month-filter" id="pSecMF"></div>
       <div class="chart-panel"><table class="data-table"><thead><tr>
-        <th>Month</th><th>Metric</th><th class="num">Target</th><th class="num">Actual</th><th class="num">Incidents</th><th class="num">Response(min)</th><th class="num">Achievement%</th><th>Status</th>
+        <th>Month</th><th>Metric</th><th class="num">Target</th><th class="num">Actual</th><th class="num">Incidents</th>
       </tr></thead><tbody id="pSecTb"></tbody></table></div>
 
-      <!-- §8 Internet Performance -->
-      <div class="section-title" style="margin-top:20px">📡 Internet Performance</div>
+      <!-- §4 Internet Performance -->
+      <div class="section-title" style="margin-top:20px">📡 Internet &amp; Network Performance</div>
       <div class="month-filter" id="pNetMF"></div>
       <div class="chart-panel"><table class="data-table"><thead><tr>
-        <th>Month</th><th>Metric</th><th class="num">Target</th><th class="num">Actual</th><th class="num">Downtime(hrs)</th><th class="num">Uptime%</th><th class="num">Complaints</th><th>Status</th>
+        <th>Month</th><th>Metric</th><th class="num">Target</th><th class="num">Actual</th><th class="num">Downtime (hrs)</th>
       </tr></thead><tbody id="pNetTb"></tbody></table></div>
 
-      <!-- §9 Upskilling -->
+      <!-- §5 Tickets -->
+      <div class="section-title" style="margin-top:20px">🎫 Tickets</div>
+      <div class="month-filter" id="pTicketMF"></div>
+      <div class="chart-panel"><table class="data-table"><thead><tr>
+        <th>Month</th><th class="num">Tickets Raised</th><th class="num">Tickets Resolved</th><th class="num">Resolution %</th>
+      </tr></thead><tbody id="pTicketTb"></tbody></table></div>
+
+      <!-- §6 Upskilling -->
       <div class="section-title" style="margin-top:20px">📚 Upskilling &amp; Training</div>
       <div class="month-filter" id="pSkillMF"></div>
       <div class="chart-panel"><table class="data-table"><thead><tr>
-        <th>Month</th><th>Program</th><th class="num">Target</th><th class="num">Actual</th><th class="num">Hours</th><th class="num">Completion%</th><th class="num">Assessment%</th><th>Status</th>
+        <th>Month</th><th>Program</th><th class="num">Target</th><th class="num">Actual</th><th class="num">Training Hours</th>
       </tr></thead><tbody id="pSkillTb"></tbody></table></div>
-
-      <!-- §10 Special Initiatives -->
-      <div class="section-title" style="margin-top:20px">🌟 Special Initiatives</div>
-      <div class="month-filter" id="pInitMF"></div>
-      <div class="chart-panel"><table class="data-table"><thead><tr>
-        <th>Month</th><th>Type</th><th>Initiative</th><th class="num">Target</th><th class="num">Actual</th><th class="num">Achievement%</th><th class="num">Impact%</th><th>Status</th>
-      </tr></thead><tbody id="pInitTb"></tbody></table></div>
     </div>
 
     <!-- SHELTER -->
@@ -733,67 +704,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
       <div class="section-title" id="hdr-shelter"> Shelter &amp; Maintenance</div>
       <div class="month-filter" id="shelterMF"></div>
       <div class="kpi-grid" id="shelterKpis"></div>
-      <div class="chart-grid">
-        <div class="chart-panel"><div class="chart-title">Category Progress <span>%</span></div>
-          <div class="chart-wrap"><canvas id="shCat"></canvas></div></div>
-        <div class="chart-panel"><div class="chart-title">Completion % Trend</div>
-          <div class="chart-wrap"><canvas id="shTrend"></canvas></div></div>
-      </div>
-      <div class="section-title">All Months — Task Summary</div>
-      <div class="chart-panel"><table class="data-table">
-        <thead><tr><th>Month</th><th class="num">Planned</th><th class="num">Done</th><th class="num">Done%</th><th class="num">Civil%</th><th class="num">Landscape%</th><th class="num">Pest%</th><th>Status</th></tr></thead>
-        <tbody id="shelterTb"></tbody></table></div>
 
-      <!-- §1 Community Area Usage -->
-      <div class="section-title" style="margin-top:20px">🏛️ Community Area Usage</div>
-      <div class="month-filter" id="shCommMF"></div>
-      <div class="chart-grid">
-        <div class="chart-panel"><div class="chart-title">Utilization % by Area</div><div class="chart-wrap"><canvas id="shCommBar"></canvas></div></div>
-        <div class="chart-panel"><div class="chart-title">Planned vs Actual Hours</div><div class="chart-wrap"><canvas id="shCommHrs"></canvas></div></div>
-      </div>
+      <!-- PPM Activities -->
+      <div class="section-title" style="margin-top:20px">🔧 Planned Preventive Maintenance (PPM) Activities</div>
+      <div class="month-filter" id="shPPMMF"></div>
+      <div class="chart-panel" style="margin-bottom:16px"><div class="chart-title">PPM Activities <span id="shPPMMonthLbl"></span></div>
+        <div class="chart-wrap"><canvas id="shPPMBar"></canvas></div></div>
       <div class="chart-panel"><table class="data-table"><thead><tr>
-        <th>Month</th><th>Community Area</th><th class="num">Planned(hrs)</th><th class="num">Actual(hrs)</th><th class="num">Variance</th><th class="num">Utilization%</th><th>Peak Times</th><th>Status</th>
-      </tr></thead><tbody id="shCommTb"></tbody></table></div>
-
-      <!-- §2 Maintenance & OFM -->
-      <div class="section-title" style="margin-top:20px">🔧 Maintenance &amp; OFM</div>
-      <div class="month-filter" id="shMaintMF"></div>
-      <div class="chart-grid">
-        <div class="chart-panel"><div class="chart-title">Task Completion by System</div><div class="chart-wrap"><canvas id="shMaintBar"></canvas></div></div>
-        <div class="chart-panel"><div class="chart-title">Planned vs Actual Cost</div><div class="chart-wrap"><canvas id="shMaintCost"></canvas></div></div>
-      </div>
-      <div class="chart-panel"><table class="data-table"><thead><tr>
-        <th>Month</th><th>System</th><th>Location</th><th class="num">Planned</th><th class="num">Completed</th><th class="num">Completion%</th><th class="num">Plan Cost</th><th class="num">Act Cost</th><th>Status</th>
-      </tr></thead><tbody id="shMaintTb"></tbody></table></div>
-
-      <!-- §3 PPM Civil -->
-      <div class="section-title" style="margin-top:20px">🏗️ PPM — Civil Infrastructure</div>
-      <div class="month-filter" id="shCivilMF"></div>
-      <div class="chart-grid">
-        <div class="chart-panel"><div class="chart-title">Compliance % by Infrastructure</div><div class="chart-wrap"><canvas id="shCivilBar"></canvas></div></div>
-        <div class="chart-panel"><div class="chart-title">Issues Found vs Resolved</div><div class="chart-wrap"><canvas id="shCivilIssue"></canvas></div></div>
-      </div>
-      <div class="chart-panel"><table class="data-table"><thead><tr>
-        <th>Month</th><th>Infrastructure</th><th>Location</th><th class="num">Planned</th><th class="num">Actual</th><th class="num">Issues</th><th class="num">Resolved</th><th class="num">Compliance%</th><th>Status</th>
-      </tr></thead><tbody id="shCivilTb"></tbody></table></div>
-
-      <!-- §4 PPM Landscape -->
-      <div class="section-title" style="margin-top:20px">🌿 PPM — Landscape Maintenance</div>
-      <div class="month-filter" id="shLandMF"></div>
-      <div class="chart-panel"><table class="data-table"><thead><tr>
-        <th>Month</th><th>Area Type</th><th>Location</th><th class="num">Planned</th><th class="num">Actual</th><th class="num">Issues</th><th class="num">Resolved</th><th class="num">Compliance%</th><th>Status</th>
-      </tr></thead><tbody id="shLandTb"></tbody></table></div>
-
-      <!-- §5 PPM Pest -->
-      <div class="section-title" style="margin-top:20px">🪲 PPM — Pest Management</div>
-      <div class="month-filter" id="shPestMF"></div>
-      <div class="chart-grid">
-        <div class="chart-panel"><div class="chart-title">Effectiveness % by Type</div><div class="chart-wrap"><canvas id="shPestBar"></canvas></div></div>
-        <div class="chart-panel"><div class="chart-title">Treatment Coverage</div><div class="chart-wrap"><canvas id="shPestCov"></canvas></div></div>
-      </div>
-      <div class="chart-panel"><table class="data-table"><thead><tr>
-        <th>Month</th><th>Treatment Type</th><th>Location</th><th class="num">Planned</th><th class="num">Actual</th><th class="num">Effectiveness%</th><th class="num">Complaints</th><th>Status</th>
-      </tr></thead><tbody id="shPestTb"></tbody></table></div>
+        <th>Month</th><th>Activity</th><th>PPM Date</th><th>Remarks / Frequency</th>
+      </tr></thead><tbody id="shPPMTb"></tbody></table></div>
     </div>
 
   <!-- THIS MONTH -->
@@ -1409,21 +1328,14 @@ let selMonth={};
 let D={energy:[],water:[],food:[],earth:[],air:[],people:[],shelter:[],
   energyCluster:[],energyDaily:[],energyVilla:[],waterConsumption:[],waterQuality:[],
   // People-Detailed
-  peopleAmenities:[],     // §2 Health & Hygiene PPM per amenity
-  peopleHealthLounge:[],  // §3 Health Lounge sessions
-  peoplePersonalSvc:[],   // §4 Personal services bookings
-  peopleSocial:[],        // §5 Social engagement events
-  peopleQuality:[],       // §6 Quality reports
-  peopleSecurity:[],      // §7 Security & surveillance
-  peopleInternet:[],      // §8 Internet performance
-  peopleUpskilling:[],    // §9 Upskilling / training
-  peopleInitiatives:[],   // §10 Special initiatives
+  peoplePersonalSvc:[],   // §1 Personal Services — Slow Down Place
+  peopleSocial:[],        // §2 Social Engagement
+  peopleSecurity:[],      // §3 Security & Surveillance
+  peopleInternet:[],      // §4 Internet Performance
+  peopleTickets:[],       // §5 Tickets
+  peopleUpskilling:[],    // §6 Upskilling / Training
   // Shelter-Detailed
-  shelterCommunity:[],    // §1 Community area usage
-  shelterMaintenance:[],  // §2 Maintenance & OFM
-  shelterCivil:[],        // §3 PPM Civil infrastructure
-  shelterLandscape:[],    // §4 PPM Landscape
-  shelterPest:[],         // §5 PPM Pest management
+  shelterPPM:[],          // PPM Activities
 };
 
 // manualEntries: array of {month, energy:{}, water:{}, food:{}, earth:[], air:{}, people:{}, shelter:{}}
@@ -1888,9 +1800,9 @@ function isNewTemplate(wb){
 function parseNewTemplate(wb,filename){
   var out={energy:[],water:[],food:[],earth:[],air:[],people:[],shelter:[],
            energyCluster:[],energyDaily:[],energyVilla:[],waterConsumption:[],waterQuality:[],
-           peopleAmenities:[],peopleHealthLounge:[],peoplePersonalSvc:[],peopleSocial:[],
-           peopleQuality:[],peopleSecurity:[],peopleInternet:[],peopleUpskilling:[],peopleInitiatives:[],
-           shelterCommunity:[],shelterMaintenance:[],shelterCivil:[],shelterLandscape:[],shelterPest:[]};
+           peoplePersonalSvc:[],peopleSocial:[],peopleSecurity:[],
+           peopleInternet:[],peopleTickets:[],peopleUpskilling:[],
+           shelterPPM:[]};
 
   // ── MONTH DETECTION (3-tier priority) ────────────────────────────────────────
   // Tier 1: exact YYYY-MM string or date serial in Instructions sheet
@@ -2265,52 +2177,40 @@ function parseNewTemplate(wb,filename){
       return result;
     }
 
-    var amenStart=peopleSec('amenity ppm');
-    if(amenStart>=0)peopleRows(amenStart,'health lounge').forEach(function(r){
-      var a=str(r[0]); if(!a)return;
-      out.peopleAmenities.push({month:month,area:a,plannedChecks:num(r[1]),actualChecks:num(r[2]),issuesFound:num(r[3]),resolved:num(r[4]),status:str(r[5]),_src:'excel'});
-    });
-
-    var hlStart=peopleSec('health lounge');
-    if(hlStart>=0)peopleRows(hlStart,'personal services').forEach(function(r){
-      var a=str(r[0]); if(!a)return;
-      out.peopleHealthLounge.push({month:month,serviceType:a,plannedSessions:num(r[1]),actualSessions:num(r[2]),participants:num(r[3]),satisfactionPct:num(r[4]),status:str(r[5]),_src:'excel'});
-    });
-
     var psStart=peopleSec('personal services');
     if(psStart>=0)peopleRows(psStart,'social engagement').forEach(function(r){
       var a=str(r[0]); if(!a)return;
-      out.peoplePersonalSvc.push({month:month,serviceType:a,plannedBookings:num(r[1]),actualBookings:num(r[2]),avgDuration:num(r[3]),satisfactionPct:num(r[4]),status:str(r[5]),_src:'excel'});
+      out.peoplePersonalSvc.push({month:month,service:a,plannedBookings:num(r[1]),actualBookings:num(r[2]),avgDuration:num(r[3]),_src:'excel'});
     });
 
     var seStart=peopleSec('social engagement');
-    if(seStart>=0)peopleRows(seStart,'quality report').forEach(function(r){
+    if(seStart>=0)peopleRows(seStart,'security').forEach(function(r){
       var a=str(r[0]); if(!a)return;
-      out.peopleSocial.push({month:month,eventType:a,plannedEvents:num(r[1]),actualEvents:num(r[2]),attendance:num(r[3]),targetAttendance:num(r[4]),status:str(r[5]),_src:'excel'});
-    });
-
-    var qrStart=peopleSec('quality report');
-    if(qrStart>=0)peopleRows(qrStart,'security').forEach(function(r){
-      var a=str(r[0]); if(!a)return;
-      out.peopleQuality.push({month:month,serviceCategory:a,qualityScore:num(r[1]),complaints:num(r[2]),resolved:num(r[3]),status:str(r[4]),_src:'excel'});
+      out.peopleSocial.push({month:month,eventType:a,plannedEvents:num(r[1]),actualEvents:num(r[2]),attendance:num(r[3]),_src:'excel'});
     });
 
     var secStart=peopleSec('security');
     if(secStart>=0)peopleRows(secStart,'internet').forEach(function(r){
       var a=str(r[0]); if(!a)return;
-      out.peopleSecurity.push({month:month,metric:a,target:num(r[1]),actual:num(r[2]),incidents:num(r[3]),responseTime:num(r[4]),status:str(r[5]),_src:'excel'});
+      out.peopleSecurity.push({month:month,metric:a,target:str(r[1]),actual:str(r[2]),incidents:num(r[3]),_src:'excel'});
     });
 
     var netStart=peopleSec('internet');
-    if(netStart>=0)peopleRows(netStart,'upskilling').forEach(function(r){
+    if(netStart>=0)peopleRows(netStart,'tickets').forEach(function(r){
       var a=str(r[0]); if(!a)return;
-      out.peopleInternet.push({month:month,metric:a,target:num(r[1]),actual:num(r[2]),status:str(r[3]),_src:'excel'});
+      out.peopleInternet.push({month:month,metric:a,target:str(r[1]),actual:str(r[2]),downtimeHrs:num(r[3]),_src:'excel'});
     });
 
-    var usStart=peopleSec('upskilling');
-    if(usStart>=0)peopleRows(usStart,'initiative').forEach(function(r){
+    var tickStart=peopleSec('tickets');
+    if(tickStart>=0)peopleRows(tickStart,'training').forEach(function(r){
+      if(num(r[1])==null&&num(r[2])==null)return;
+      out.peopleTickets.push({month:month,raised:num(r[1]),resolved:num(r[2]),resolutionPct:num(r[3]),_src:'excel'});
+    });
+
+    var usStart=peopleSec('training');
+    if(usStart>=0)peopleRows(usStart,'').forEach(function(r){
       var a=str(r[0]); if(!a)return;
-      out.peopleUpskilling.push({month:month,program:a,targetParticipants:num(r[1]),actualParticipants:num(r[2]),trainingHrs:num(r[3]),completionPct:num(r[4]),status:str(r[5]),_src:'excel'});
+      out.peopleUpskilling.push({month:month,program:a,targetParticipants:num(r[1]),actualParticipants:num(r[2]),trainingHrs:num(r[3]),_src:'excel'});
     });
   }
 
@@ -2351,34 +2251,10 @@ function parseNewTemplate(wb,filename){
       return result;
     }
 
-    var caStart=shelterSec('community area');
-    if(caStart>=0)shelterRows(caStart,'ofm maintenance').forEach(function(r){
+    var ppmStart=shelterSec('ppm activities');
+    if(ppmStart>=0)shelterRows(ppmStart,'').forEach(function(r){
       var a=str(r[0]); if(!a)return;
-      out.shelterCommunity.push({month:month,area:a,plannedHrs:num(r[1]),actualHrs:num(r[2]),peakTimes:str(r[3]),status:str(r[4]),_src:'excel'});
-    });
-
-    var maintStart=shelterSec('ofm maintenance');
-    if(maintStart>=0)shelterRows(maintStart,'civil ppm').forEach(function(r){
-      var a=str(r[0]); if(!a)return;
-      out.shelterMaintenance.push({month:month,system:a,plannedTasks:num(r[1]),completedTasks:num(r[2]),plannedCost:num(r[3]),actualCost:num(r[4]),status:str(r[5]),_src:'excel'});
-    });
-
-    var civStart=shelterSec('civil ppm');
-    if(civStart>=0)shelterRows(civStart,'landscape ppm').forEach(function(r){
-      var a=str(r[0]); if(!a)return;
-      out.shelterCivil.push({month:month,infrastructure:a,plannedChecks:num(r[1]),actualChecks:num(r[2]),issuesFound:num(r[3]),resolved:num(r[4]),status:str(r[5]),_src:'excel'});
-    });
-
-    var lsStart=shelterSec('landscape ppm');
-    if(lsStart>=0)shelterRows(lsStart,'pest control').forEach(function(r){
-      var a=str(r[0]); if(!a)return;
-      out.shelterLandscape.push({month:month,areaType:a,plannedChecks:num(r[1]),actualChecks:num(r[2]),issuesFound:num(r[3]),resolved:num(r[4]),status:str(r[5]),_src:'excel'});
-    });
-
-    var pestStart=shelterSec('pest control');
-    if(pestStart>=0)shelterRows(pestStart,'').forEach(function(r){
-      var a=str(r[0]); if(!a)return;
-      out.shelterPest.push({month:month,treatmentType:a,plannedTreatments:num(r[1]),actualTreatments:num(r[2]),effectivenessPct:num(r[3]),complaints:num(r[4]),status:str(r[5]),_src:'excel'});
+      out.shelterPPM.push({month:month,activity:a,ppmDate:str(r[1]),remarks:str(r[2]),_src:'excel'});
     });
   }
 
@@ -2418,7 +2294,9 @@ function parseNewTemplate(wb,filename){
 function parseWorkbook(wb,filename){
   if(isNewTemplate(wb))return parseNewTemplate(wb,filename);
   const out={energy:[],water:[],food:[],earth:[],air:[],people:[],shelter:[],
-             energyCluster:[],energyDaily:[],energyVilla:[],waterConsumption:[],waterQuality:[]};
+             energyCluster:[],energyDaily:[],energyVilla:[],waterConsumption:[],waterQuality:[],
+             peoplePersonalSvc:[],peopleSocial:[],peopleSecurity:[],peopleInternet:[],peopleTickets:[],peopleUpskilling:[],
+             shelterPPM:[]};
 
   // ── ENERGY DASHBOARD ──────────────────────────
   const e=parseSheet(wb,['⚡ Energy Dashboard','Energy Dashboard']);
@@ -2696,42 +2574,29 @@ function parseWorkbook(wb,filename){
         }
         return result;
       }
-      // §2 Health & Hygiene Amenities
-      out.peopleAmenities=pdParse(pdSection('health & hygiene'),(r,ci,m)=>null,
-        (r,ci,m)=>({month:m,area:str(r[1]),plannedChecks:num(r[2]),actualChecks:num(r[3]),
-          issuesFound:num(r[4]),resolved:num(r[5]),compliancePct:num(r[6]),status:str(r[7]),_src:'excel'}));
-      // §3 Health Lounge
-      out.peopleHealthLounge=pdParse(pdSection('health lounge'),(r,ci,m)=>null,
-        (r,ci,m)=>({month:m,serviceType:str(r[1]),plannedSessions:num(r[2]),actualSessions:num(r[3]),
-          participants:num(r[4]),satisfactionPct:num(r[5]),achievementPct:num(r[6]),status:str(r[7]),_src:'excel'}));
-      // §4 Personal Services
+      // §1 Personal Services
       out.peoplePersonalSvc=pdParse(pdSection('personal services'),(r,ci,m)=>null,
-        (r,ci,m)=>({month:m,serviceType:str(r[1]),plannedBookings:num(r[2]),actualBookings:num(r[3]),
-          utilizationPct:num(r[4]),avgDuration:num(r[5]),satisfactionPct:num(r[6]),status:str(r[7]),_src:'excel'}));
-      // §5 Social Engagement
+        (r,ci,m)=>({month:m,service:str(r[1]),plannedBookings:num(r[2]),actualBookings:num(r[3]),
+          avgDuration:num(r[4]),_src:'excel'}));
+      // §2 Social Engagement
       out.peopleSocial=pdParse(pdSection('social engagement'),(r,ci,m)=>null,
         (r,ci,m)=>({month:m,eventType:str(r[1]),plannedEvents:num(r[2]),actualEvents:num(r[3]),
-          attendance:num(r[4]),targetAttendance:num(r[5]),effectivenessPct:num(r[6]),status:str(r[7]),_src:'excel'}));
-      // §6 Quality Reports
-      out.peopleQuality=pdParse(pdSection('quality report'),(r,ci,m)=>null,
-        (r,ci,m)=>({month:m,serviceCategory:str(r[1]),serviceName:str(r[2]),qualityScore:num(r[3]),
-          complaints:num(r[4]),resolved:num(r[5]),resolutionPct:num(r[6]),status:str(r[7]),_src:'excel'}));
-      // §7 Security
+          attendance:num(r[4]),_src:'excel'}));
+      // §3 Security
       out.peopleSecurity=pdParse(pdSection('security'),(r,ci,m)=>null,
-        (r,ci,m)=>({month:m,metric:str(r[1]),target:num(r[2]),actual:num(r[3]),
-          incidents:r[4],responseTime:num(r[5]),achievementPct:num(r[6]),status:str(r[7]),_src:'excel'}));
-      // §8 Internet
+        (r,ci,m)=>({month:m,metric:str(r[1]),target:str(r[2]),actual:str(r[3]),
+          incidents:num(r[4]),_src:'excel'}));
+      // §4 Internet
       out.peopleInternet=pdParse(pdSection('internet'),(r,ci,m)=>null,
-        (r,ci,m)=>({month:m,metric:str(r[1]),target:num(r[2]),actual:num(r[3]),
-          downtimeHrs:num(r[4]),uptimePct:num(r[5]),complaints:num(r[6]),status:str(r[7]),_src:'excel'}));
-      // §9 Upskilling
-      out.peopleUpskilling=pdParse(pdSection('upskilling'),(r,ci,m)=>null,
+        (r,ci,m)=>({month:m,metric:str(r[1]),target:str(r[2]),actual:str(r[3]),
+          downtimeHrs:num(r[4]),_src:'excel'}));
+      // §5 Tickets
+      out.peopleTickets=pdParse(pdSection('tickets'),(r,ci,m)=>null,
+        (r,ci,m)=>({month:m,raised:num(r[1]),resolved:num(r[2]),resolutionPct:num(r[3]),_src:'excel'}));
+      // §6 Upskilling
+      out.peopleUpskilling=pdParse(pdSection('training'),(r,ci,m)=>null,
         (r,ci,m)=>({month:m,program:str(r[1]),targetParticipants:num(r[2]),actualParticipants:num(r[3]),
-          trainingHrs:num(r[4]),completionPct:num(r[5]),assessmentScore:num(r[6]),status:str(r[7]),_src:'excel'}));
-      // §10 Special Initiatives
-      out.peopleInitiatives=pdParse(pdSection('special initiatives'),(r,ci,m)=>null,
-        (r,ci,m)=>({month:m,initiativeType:str(r[1]),initiativeName:str(r[2]),target:num(r[3]),
-          actual:num(r[4]),achievementPct:num(r[5]),impactScore:num(r[6]),status:str(r[7]),_src:'excel'}));
+          trainingHrs:num(r[4]),_src:'excel'}));
     }catch(e){console.warn('People-Detailed parse error:',e.message);}
   }
 
@@ -2764,26 +2629,9 @@ function parseWorkbook(wb,filename){
         }
         return result;
       }
-      // §1 Community Area Usage
-      out.shelterCommunity=sdParse(sdSection('usage pattern of community'),
-        (r,m)=>({month:m,area:str(r[1]),plannedHrs:num(r[2]),actualHrs:num(r[3]),
-          variance:num(r[4]),utilizationPct:num(r[5]),peakTimes:str(r[6]),status:str(r[7]),_src:'excel'}));
-      // §2 Maintenance & OFM
-      out.shelterMaintenance=sdParse(sdSection('maintenance'),
-        (r,m)=>({month:m,system:str(r[1]),location:str(r[2]),plannedTasks:num(r[3]),completedTasks:num(r[4]),
-          plannedCost:num(r[5]),actualCost:num(r[6]),completionPct:num(r[7]),status:str(r[8]),_src:'excel'}));
-      // §3 PPM Civil
-      out.shelterCivil=sdParse(sdSection('civil infrastructure'),
-        (r,m)=>({month:m,infrastructure:str(r[1]),location:str(r[2]),plannedChecks:num(r[3]),actualChecks:num(r[4]),
-          issuesFound:num(r[5]),resolved:num(r[6]),compliancePct:num(r[7]),status:str(r[8]),_src:'excel'}));
-      // §4 PPM Landscape
-      out.shelterLandscape=sdParse(sdSection('landscape'),
-        (r,m)=>({month:m,areaType:str(r[1]),location:str(r[2]),plannedChecks:num(r[3]),actualChecks:num(r[4]),
-          issuesFound:num(r[5]),resolved:num(r[6]),compliancePct:num(r[7]),status:str(r[8]),_src:'excel'}));
-      // §5 PPM Pest
-      out.shelterPest=sdParse(sdSection('pest'),
-        (r,m)=>({month:m,treatmentType:str(r[1]),location:str(r[2]),plannedTreatments:num(r[3]),actualTreatments:num(r[4]),
-          effectivenessPct:num(r[5]),complaints:num(r[6]),status:str(r[7]),_src:'excel'}));
+      // PPM Activities
+      out.shelterPPM=sdParse(sdSection('ppm activities'),
+        (r,m)=>({month:m,activity:str(r[1]),ppmDate:str(r[2]),remarks:str(r[3]),_src:'excel'}));
     }catch(e){console.warn('Shelter-Detailed parse error:',e.message);}
   }
 
@@ -2809,12 +2657,10 @@ function mergeExcelData(xlData) {
   if(xlData.waterConsumption) D.waterConsumption=xlData.waterConsumption;
   if(xlData.waterQuality)  D.waterQuality=xlData.waterQuality;
   // People-Detailed sub-arrays
-  const pdKeys=['peopleAmenities','peopleHealthLounge','peoplePersonalSvc','peopleSocial',
-                'peopleQuality','peopleSecurity','peopleInternet','peopleUpskilling','peopleInitiatives'];
+  const pdKeys=['peoplePersonalSvc','peopleSocial','peopleSecurity','peopleInternet','peopleTickets','peopleUpskilling'];
   for(const k of pdKeys){ if(xlData[k]&&xlData[k].length) D[k]=xlData[k]; }
   // Shelter-Detailed sub-arrays
-  const sdKeys=['shelterCommunity','shelterMaintenance','shelterCivil','shelterLandscape','shelterPest'];
-  for(const k of sdKeys){ if(xlData[k]&&xlData[k].length) D[k]=xlData[k]; }
+  if(xlData.shelterPPM&&xlData.shelterPPM.length) D.shelterPPM=xlData.shelterPPM;
 }
 
 // ════════════════════════════════════
@@ -2833,9 +2679,8 @@ async function confirmClearData(){
 
   const allKeys=['energy','water','food','earth','air','people','shelter',
                  'energyCluster','energyDaily','energyVilla','waterConsumption','waterQuality',
-                 'peopleAmenities','peopleHealthLounge','peoplePersonalSvc','peopleSocial',
-                 'peopleQuality','peopleSecurity','peopleInternet','peopleUpskilling','peopleInitiatives',
-                 'shelterCommunity','shelterMaintenance','shelterCivil','shelterLandscape','shelterPest'];
+                 'peoplePersonalSvc','peopleSocial','peopleSecurity','peopleInternet','peopleTickets','peopleUpskilling',
+                 'shelterPPM'];
 
   if(clrExcel && clrManual){
     // Wipe everything
@@ -4572,309 +4417,103 @@ function renderPeople(){
     <td class="num">${o}%</td><td class="num">${fmt(r.plannedFootfall)}</td><td class="num">${fmt(r.actualFootfall)}</td><td>${tagHtml(r.status)}</td></tr>`;
   }).join('');
 
-  // §2 Amenities PPM
-  if(D.peopleAmenities.length){
-    const amenMonths=[...new Set(D.peopleAmenities.map(r=>r.month))].sort();
-    buildMFCustom('pAmenMF',amenMonths,'pAmen',renderPeople);
-    const amenSel=selMonth['pAmen']||amenMonths[amenMonths.length-1];
-    const amenRows=D.peopleAmenities.filter(r=>r.month===amenSel);
-    const areas=amenRows.map(r=>r.area||'');
-    const compliance=amenRows.map(r=>r.compliancePct!=null?Number(r.compliancePct)*100:0);
-    const issues=amenRows.map(r=>r.issuesFound||0);
-    const resolved=amenRows.map(r=>r.resolved||0);
-    mkBar('pAmenBar',areas,[
-      {label:'Compliance%',data:compliance,backgroundColor:C.green,borderRadius:3,borderWidth:0}
-    ],{indexAxis:'y',plugins:{legend:{display:false}}});
-    mkBar('pAmenIssue',areas,[
-      {label:'Issues',data:issues,backgroundColor:C.red,borderRadius:3,borderWidth:0},
-      {label:'Resolved',data:resolved,backgroundColor:C.green,borderRadius:3,borderWidth:0}
-    ],{indexAxis:'y'});
-    document.getElementById('pAmenTb').innerHTML=D.peopleAmenities.map(r=>{
-      const cp=r.compliancePct!=null?Number(r.compliancePct)*100:null;
-      return`<tr><td>${r.month}</td><td>${r.area}</td><td class="num">${fmt(r.plannedChecks)}</td><td class="num">${fmt(r.actualChecks)}</td>
-        <td class="num">${fmt(r.issuesFound)}</td><td class="num">${fmt(r.resolved)}</td>
-        <td class="num">${cp!=null?cp.toFixed(1)+'%':'—'}</td><td>${tagHtml(r.status)}</td></tr>`;
-    }).join('');
-  }
-
-  // §3 Health Lounge
-  if(D.peopleHealthLounge.length){
-    const hlMonths=[...new Set(D.peopleHealthLounge.map(r=>r.month))].sort();
-    buildMFCustom('pLoungeMF',hlMonths,'pLounge',renderPeople);
-    const hlSel=selMonth['pLounge']||hlMonths[hlMonths.length-1];
-    const hlRows=D.peopleHealthLounge.filter(r=>r.month===hlSel);
-    const svcs=hlRows.map(r=>r.serviceType||'');
-    mkBar('pLoungeBar',svcs,[
-      {label:'Planned',data:hlRows.map(r=>r.plannedSessions||0),backgroundColor:C.grey,borderRadius:3,borderWidth:0},
-      {label:'Actual',data:hlRows.map(r=>r.actualSessions||0),backgroundColor:C.purple,borderRadius:3,borderWidth:0}
-    ]);
-    mkBar('pLoungeSat',svcs,[
-      {label:'Satisfaction%',data:hlRows.map(r=>r.satisfactionPct!=null?Number(r.satisfactionPct)*100:0),backgroundColor:C.green,borderRadius:3,borderWidth:0}
-    ],{plugins:{legend:{display:false}}});
-    document.getElementById('pLoungeTb').innerHTML=D.peopleHealthLounge.map(r=>{
-      const sat=r.satisfactionPct!=null?Number(r.satisfactionPct)*100:null;
-      const ach=r.achievementPct!=null?Number(r.achievementPct)*100:null;
-      return`<tr><td>${r.month}</td><td>${r.serviceType}</td><td class="num">${fmt(r.plannedSessions)}</td>
-        <td class="num">${fmt(r.actualSessions)}</td><td class="num">${fmt(r.participants)}</td>
-        <td class="num">${sat!=null?sat.toFixed(0)+'%':'—'}</td>
-        <td class="num">${ach!=null?ach.toFixed(0)+'%':'—'}</td><td>${tagHtml(r.status)}</td></tr>`;
-    }).join('');
-  }
-
-  // §4 Personal Services
+  // §1 Personal Services
   if(D.peoplePersonalSvc.length){
     const svcMonths=[...new Set(D.peoplePersonalSvc.map(r=>r.month))].sort();
     buildMFCustom('pSvcMF',svcMonths,'pSvc',renderPeople);
-    document.getElementById('pSvcTb').innerHTML=D.peoplePersonalSvc.map(r=>{
-      const ut=r.utilizationPct!=null?Number(r.utilizationPct)*100:null;
-      const sat=r.satisfactionPct!=null?Number(r.satisfactionPct)*100:null;
-      return`<tr><td>${r.month}</td><td>${r.serviceType}</td><td class="num">${fmt(r.plannedBookings)}</td>
-        <td class="num">${fmt(r.actualBookings)}</td>
-        <td class="num">${ut!=null?ut.toFixed(0)+'%':'—'}</td>
-        <td class="num">${fmt(r.avgDuration)}</td>
-        <td class="num">${sat!=null?sat.toFixed(0)+'%':'—'}</td><td>${tagHtml(r.status)}</td></tr>`;
-    }).join('');
+    const svcSel=selMonth['pSvc']||svcMonths[svcMonths.length-1];
+    const el=document.getElementById('pSvcMonthLbl');if(el)el.textContent=svcSel;
+    const svcRows=D.peoplePersonalSvc.filter(r=>r.month===svcSel);
+    mkBar('pSvcBar',svcRows.map(r=>r.service||''),[
+      {label:'Planned',data:svcRows.map(r=>r.plannedBookings||0),backgroundColor:C.grey,borderRadius:3,borderWidth:0},
+      {label:'Actual',data:svcRows.map(r=>r.actualBookings||0),backgroundColor:C.purple,borderRadius:3,borderWidth:0}
+    ]);
+    document.getElementById('pSvcTb').innerHTML=D.peoplePersonalSvc.map(r=>
+      `<tr><td>${r.month}</td><td>${r.service||'—'}</td><td class="num">${fmt(r.plannedBookings)}</td>
+      <td class="num">${fmt(r.actualBookings)}</td><td class="num">${fmt(r.avgDuration)||'—'}</td></tr>`
+    ).join('');
   }
 
-  // §5 Social Events
+  // §2 Social Engagement
   if(D.peopleSocial.length){
     const socMonths=[...new Set(D.peopleSocial.map(r=>r.month))].sort();
     buildMFCustom('pSocialMF',socMonths,'pSocial',renderPeople);
     const socSel=selMonth['pSocial']||socMonths[socMonths.length-1];
+    const el=document.getElementById('pSocialMonthLbl');if(el)el.textContent=socSel;
     const socRows=D.peopleSocial.filter(r=>r.month===socSel);
-    const etypes=socRows.map(r=>r.eventType||'');
-    mkBar('pSocialBar',etypes,[
+    mkBar('pSocialBar',socRows.map(r=>r.eventType||''),[
       {label:'Planned',data:socRows.map(r=>r.plannedEvents||0),backgroundColor:C.grey,borderRadius:3,borderWidth:0},
       {label:'Actual',data:socRows.map(r=>r.actualEvents||0),backgroundColor:C.amber,borderRadius:3,borderWidth:0}
     ]);
-    // Effectiveness trend over months for all events
-    const allSocMonths=[...new Set(D.peopleSocial.map(r=>r.month))].sort();
-    const effByMonth=allSocMonths.map(m=>{
-      const rows=D.peopleSocial.filter(r=>r.month===m&&r.effectivenessPct!=null);
-      if(!rows.length)return 0;
-      const avg=rows.reduce((s,r)=>s+Number(r.effectivenessPct),0)/rows.length;
-      return Math.round(avg*100);
-    });
-    mkLine('pSocialEff',allSocMonths,[
-      {label:'Avg Effectiveness%',data:effByMonth,borderColor:C.amber,backgroundColor:'rgba(255,179,64,0.08)',fill:true,tension:0.4,pointRadius:3}
-    ]);
-    document.getElementById('pSocialTb').innerHTML=D.peopleSocial.map(r=>{
-      const ef=r.effectivenessPct!=null?Number(r.effectivenessPct)*100:null;
-      return`<tr><td>${r.month}</td><td>${r.eventType}</td><td class="num">${fmt(r.plannedEvents)}</td>
-        <td class="num">${fmt(r.actualEvents)}</td><td class="num">${fmt(r.attendance)}</td>
-        <td class="num">${fmt(r.targetAttendance)}</td>
-        <td class="num">${ef!=null?ef.toFixed(0)+'%':'—'}</td><td>${tagHtml(r.status)}</td></tr>`;
-    }).join('');
+    document.getElementById('pSocialTb').innerHTML=D.peopleSocial.map(r=>
+      `<tr><td>${r.month}</td><td>${r.eventType||'—'}</td><td class="num">${fmt(r.plannedEvents)}</td>
+      <td class="num">${fmt(r.actualEvents)}</td><td class="num">${fmt(r.attendance)}</td></tr>`
+    ).join('');
   }
 
-  // §6 Quality Reports
-  if(D.peopleQuality.length){
-    buildMFCustom('pQualMF',[...new Set(D.peopleQuality.map(r=>r.month))].sort(),'pQual',renderPeople);
-    document.getElementById('pQualTb').innerHTML=D.peopleQuality.map(r=>{
-      const qs=r.qualityScore!=null?Number(r.qualityScore)*100:null;
-      const rp=r.resolutionPct!=null?Number(r.resolutionPct)*100:null;
-      return`<tr><td>${r.month}</td><td>${r.serviceCategory}</td><td>${r.serviceName}</td>
-        <td class="num">${qs!=null?qs.toFixed(0)+'%':'—'}</td>
-        <td class="num">${fmt(r.complaints)}</td><td class="num">${fmt(r.resolved)}</td>
-        <td class="num">${rp!=null?rp.toFixed(0)+'%':'—'}</td><td>${tagHtml(r.status)}</td></tr>`;
-    }).join('');
-  }
-
-  // §7 Security
+  // §3 Security
   if(D.peopleSecurity.length){
     buildMFCustom('pSecMF',[...new Set(D.peopleSecurity.map(r=>r.month))].sort(),'pSec',renderPeople);
-    document.getElementById('pSecTb').innerHTML=D.peopleSecurity.map(r=>{
-      const ach=r.achievementPct!=null?Number(r.achievementPct)*100:null;
-      return`<tr><td>${r.month}</td><td>${r.metric}</td><td class="num">${fmt(r.target)}</td>
-        <td class="num">${fmt(r.actual)}</td><td class="num">${r.incidents!=null?r.incidents:'—'}</td>
-        <td class="num">${fmt(r.responseTime)}</td>
-        <td class="num">${ach!=null?ach.toFixed(0)+'%':'—'}</td><td>${tagHtml(r.status)}</td></tr>`;
-    }).join('');
+    document.getElementById('pSecTb').innerHTML=D.peopleSecurity.map(r=>
+      `<tr><td>${r.month}</td><td>${r.metric||'—'}</td><td class="num">${r.target||'—'}</td>
+      <td class="num">${r.actual||'—'}</td><td class="num">${r.incidents!=null?r.incidents:'—'}</td></tr>`
+    ).join('');
   }
 
-  // §8 Internet
+  // §4 Internet
   if(D.peopleInternet.length){
     buildMFCustom('pNetMF',[...new Set(D.peopleInternet.map(r=>r.month))].sort(),'pNet',renderPeople);
-    document.getElementById('pNetTb').innerHTML=D.peopleInternet.map(r=>{
-      const up=r.uptimePct!=null?Number(r.uptimePct)*100:null;
-      return`<tr><td>${r.month}</td><td>${r.metric}</td><td class="num">${fmt(r.target)}</td>
-        <td class="num">${fmt(r.actual)}</td><td class="num">${fmt(r.downtimeHrs)}</td>
-        <td class="num">${up!=null?up.toFixed(1)+'%':'—'}</td>
-        <td class="num">${fmt(r.complaints)}</td><td>${tagHtml(r.status)}</td></tr>`;
+    document.getElementById('pNetTb').innerHTML=D.peopleInternet.map(r=>
+      `<tr><td>${r.month}</td><td>${r.metric||'—'}</td><td class="num">${r.target||'—'}</td>
+      <td class="num">${r.actual||'—'}</td><td class="num">${r.downtimeHrs!=null?r.downtimeHrs:'—'}</td></tr>`
+    ).join('');
+  }
+
+  // §5 Tickets
+  if(D.peopleTickets.length){
+    buildMFCustom('pTicketMF',[...new Set(D.peopleTickets.map(r=>r.month))].sort(),'pTicket',renderPeople);
+    document.getElementById('pTicketTb').innerHTML=D.peopleTickets.map(r=>{
+      const rp=r.resolutionPct!=null?Number(r.resolutionPct)*100:
+               (r.raised&&r.resolved)?Math.round((r.resolved/r.raised)*100):null;
+      return`<tr><td>${r.month}</td><td class="num">${fmt(r.raised)}</td>
+      <td class="num">${fmt(r.resolved)}</td><td class="num">${rp!=null?rp.toFixed(0)+'%':'—'}</td></tr>`;
     }).join('');
   }
 
-  // §9 Upskilling
+  // §6 Upskilling
   if(D.peopleUpskilling.length){
     buildMFCustom('pSkillMF',[...new Set(D.peopleUpskilling.map(r=>r.month))].sort(),'pSkill',renderPeople);
-    document.getElementById('pSkillTb').innerHTML=D.peopleUpskilling.map(r=>{
-      const cp=r.completionPct!=null?Number(r.completionPct)*100:null;
-      const as=r.assessmentScore!=null?Number(r.assessmentScore)*100:null;
-      return`<tr><td>${r.month}</td><td>${r.program}</td><td class="num">${fmt(r.targetParticipants)}</td>
-        <td class="num">${fmt(r.actualParticipants)}</td><td class="num">${fmt(r.trainingHrs)}</td>
-        <td class="num">${cp!=null?cp.toFixed(0)+'%':'—'}</td>
-        <td class="num">${as!=null?as.toFixed(0)+'%':'—'}</td><td>${tagHtml(r.status)}</td></tr>`;
-    }).join('');
-  }
-
-  // §10 Special Initiatives
-  if(D.peopleInitiatives.length){
-    buildMFCustom('pInitMF',[...new Set(D.peopleInitiatives.map(r=>r.month))].sort(),'pInit',renderPeople);
-    document.getElementById('pInitTb').innerHTML=D.peopleInitiatives.map(r=>{
-      const ach=r.achievementPct!=null?Number(r.achievementPct)*100:null;
-      const imp=r.impactScore!=null?Number(r.impactScore)*100:null;
-      return`<tr><td>${r.month}</td><td>${r.initiativeType}</td><td>${r.initiativeName}</td>
-        <td class="num">${fmt(r.target)}</td><td class="num">${fmt(r.actual)}</td>
-        <td class="num">${ach!=null?ach.toFixed(0)+'%':'—'}</td>
-        <td class="num">${imp!=null?imp.toFixed(0)+'%':'—'}</td><td>${tagHtml(r.status)}</td></tr>`;
-    }).join('');
+    document.getElementById('pSkillTb').innerHTML=D.peopleUpskilling.map(r=>
+      `<tr><td>${r.month}</td><td>${r.program||'—'}</td><td class="num">${fmt(r.targetParticipants)}</td>
+      <td class="num">${fmt(r.actualParticipants)}</td><td class="num">${fmt(r.trainingHrs)}</td></tr>`
+    ).join('');
   }
 }
 
 // ── SHELTER ─────────────────────────────────────
 function renderShelter(){
-  buildMF('shelterMF',D.shelter,'shelter',renderShelter);
-  const sel=selMonth['shelter']||latestOf(D.shelter).month;
-  const row=D.shelter.find(r=>r.month===sel)||latestOf(D.shelter);
-  const cp=row.planned>0?Math.round((row.completed/row.planned)*100):0;
+  const ppmMonths=[...new Set(D.shelterPPM.map(r=>r.month))].sort();
+  const ppmSel=selMonth['shPPM']||ppmMonths[ppmMonths.length-1]||'';
+  const ppmRows=D.shelterPPM.filter(r=>r.month===ppmSel);
+  const totalPPM=ppmRows.length;
+  const monthlyCount=ppmRows.filter(r=>(r.remarks||'').toLowerCase().includes('monthly')).length;
+  const quarterlyCount=ppmRows.filter(r=>(r.remarks||'').toLowerCase().includes('quarterly')).length;
+
   document.getElementById('shelterKpis').innerHTML=
-    kpiCard('📋','Planned Tasks',fmt(row.planned),row.month,tagHtml(row.status),C.yellow,0)+
-    kpiCard('✅','Completed',fmt(row.completed),'tasks',`<span class="tag tag-${cp>=90?'green':cp>=60?'amber':'red'}">${cp}% done</span>`,cp>=90?C.green:C.amber,0.04)+
-    kpiCard('🏗️','Civil Infra',pct(row.civilPct),'completion','',C.amber,0.08)+
-    kpiCard('🌿','Landscape',pct(row.landscapePct),'completion','',C.green,0.12)+
-    kpiCard('🪲','Pest Mgmt',pct(row.pestPct),'completion','',C.blue,0.16);
-  mkBar('shCat',['Civil Infra','Landscape','Pest Mgmt'],[
-    {label:'%',data:[row.civilPct||0,row.landscapePct||0,row.pestPct||0],backgroundColor:[C.amber,C.green,C.blue],borderRadius:3,borderWidth:0},
-  ]);
-  mkLine('shTrend',D.shelter.map(r=>r.month),[
-    {label:'Overall%',data:D.shelter.map(r=>r.planned>0?Math.round((r.completed/r.planned)*100):0),borderColor:C.orange,backgroundColor:'rgba(255,156,91,0.07)',fill:true,tension:0.4,pointRadius:3},
-    {label:'Civil%',data:D.shelter.map(r=>r.civilPct||0),borderColor:C.amber,backgroundColor:'transparent',tension:0.4,pointRadius:3},
-  ],{plugins:{legend:{display:true}}});
-  document.getElementById('shelterTb').innerHTML=D.shelter.map(r=>{
-    const c=r.planned>0?Math.round((r.completed/r.planned)*100):0;
-    return`<tr><td>${r.month}</td><td class="num">${fmt(r.planned)}</td><td class="num">${fmt(r.completed)}</td>
-    <td class="num">${c}%</td><td class="num">${pct(r.civilPct)}</td><td class="num">${pct(r.landscapePct)}</td>
-    <td class="num">${pct(r.pestPct)}</td><td>${tagHtml(r.status)}</td></tr>`;
-  }).join('');
+    kpiCard('🔧','PPM Activities',totalPPM,ppmSel||'—','',C.amber,0)+
+    kpiCard('📅','Monthly PPMs',monthlyCount,'activities',`<span class="tag tag-green">Recurring</span>`,C.green,0.04)+
+    kpiCard('📆','Quarterly PPMs',quarterlyCount,'activities','',C.blue,0.08);
 
-  // §1 Community Area Usage
-  if(D.shelterCommunity.length){
-    const cMonths=[...new Set(D.shelterCommunity.map(r=>r.month))].sort();
-    buildMFCustom('shCommMF',cMonths,'shComm',renderShelter);
-    const cSel=selMonth['shComm']||cMonths[cMonths.length-1];
-    const cRows=D.shelterCommunity.filter(r=>r.month===cSel);
-    const areas=cRows.map(r=>r.area||'');
-    mkBar('shCommBar',areas,[
-      {label:'Utilization%',data:cRows.map(r=>r.utilizationPct!=null?Number(r.utilizationPct)*100:0),backgroundColor:C.blue,borderRadius:3,borderWidth:0}
-    ],{indexAxis:'y',plugins:{legend:{display:false}}});
-    mkBar('shCommHrs',areas,[
-      {label:'Planned',data:cRows.map(r=>r.plannedHrs||0),backgroundColor:C.grey,borderRadius:3,borderWidth:0},
-      {label:'Actual',data:cRows.map(r=>r.actualHrs||0),backgroundColor:C.purple,borderRadius:3,borderWidth:0}
-    ],{indexAxis:'y'});
-    document.getElementById('shCommTb').innerHTML=D.shelterCommunity.map(r=>{
-      const ut=r.utilizationPct!=null?Number(r.utilizationPct)*100:null;
-      return`<tr><td>${r.month}</td><td>${r.area}</td><td class="num">${fmt(r.plannedHrs)}</td>
-        <td class="num">${fmt(r.actualHrs)}</td><td class="num">${fmt(r.variance)}</td>
-        <td class="num">${ut!=null?ut.toFixed(0)+'%':'—'}</td>
-        <td>${r.peakTimes||'—'}</td><td>${tagHtml(r.status)}</td></tr>`;
-    }).join('');
-  }
-
-  // §2 Maintenance & OFM
-  if(D.shelterMaintenance.length){
-    const mMonths=[...new Set(D.shelterMaintenance.map(r=>r.month))].sort();
-    buildMFCustom('shMaintMF',mMonths,'shMaint',renderShelter);
-    const mSel=selMonth['shMaint']||mMonths[mMonths.length-1];
-    const mRows=D.shelterMaintenance.filter(r=>r.month===mSel);
-    // Aggregate by system
-    const sysMap={};
-    mRows.forEach(r=>{const s=r.system||'Other';if(!sysMap[s])sysMap[s]={p:0,c:0};sysMap[s].p+=r.plannedTasks||0;sysMap[s].c+=r.completedTasks||0;});
-    const sysList=Object.keys(sysMap);
-    mkBar('shMaintBar',sysList,[
-      {label:'Planned',data:sysList.map(s=>sysMap[s].p),backgroundColor:C.grey,borderRadius:3,borderWidth:0},
-      {label:'Completed',data:sysList.map(s=>sysMap[s].c),backgroundColor:C.green,borderRadius:3,borderWidth:0}
-    ]);
-    // Cost comparison
-    mkBar('shMaintCost',sysList,[
-      {label:'Plan Cost',data:sysList.map(s=>{const rs=mRows.filter(r=>r.system===s);return rs.reduce((a,r)=>a+(r.plannedCost||0),0);}),backgroundColor:C.grey,borderRadius:3,borderWidth:0},
-      {label:'Actual Cost',data:sysList.map(s=>{const rs=mRows.filter(r=>r.system===s);return rs.reduce((a,r)=>a+(r.actualCost||0),0);}),backgroundColor:C.red,borderRadius:3,borderWidth:0}
-    ]);
-    document.getElementById('shMaintTb').innerHTML=D.shelterMaintenance.map(r=>{
-      const cp=r.completionPct!=null?Number(r.completionPct)*100:null;
-      return`<tr><td>${r.month}</td><td>${r.system}</td><td>${r.location}</td>
-        <td class="num">${fmt(r.plannedTasks)}</td><td class="num">${fmt(r.completedTasks)}</td>
-        <td class="num">${cp!=null?cp.toFixed(0)+'%':'—'}</td>
-        <td class="num">${fmt(r.plannedCost)}</td><td class="num">${fmt(r.actualCost)}</td>
-        <td>${tagHtml(r.status)}</td></tr>`;
-    }).join('');
-  }
-
-  // §3 PPM Civil
-  if(D.shelterCivil.length){
-    const civMonths=[...new Set(D.shelterCivil.map(r=>r.month))].sort();
-    buildMFCustom('shCivilMF',civMonths,'shCivil',renderShelter);
-    const civSel=selMonth['shCivil']||civMonths[civMonths.length-1];
-    const civRows=D.shelterCivil.filter(r=>r.month===civSel);
-    const infras=[...new Set(civRows.map(r=>r.infrastructure||''))];
-    // Avg compliance per infrastructure
-    const compMap=infras.map(inf=>{
-      const rs=civRows.filter(r=>r.infrastructure===inf&&r.compliancePct!=null);
-      return rs.length?rs.reduce((s,r)=>s+Number(r.compliancePct),0)/rs.length*100:0;
-    });
-    mkBar('shCivilBar',infras,[
-      {label:'Compliance%',data:compMap,backgroundColor:C.amber,borderRadius:3,borderWidth:0}
-    ],{indexAxis:'y',plugins:{legend:{display:false}}});
-    const issueMap=infras.map(inf=>civRows.filter(r=>r.infrastructure===inf).reduce((s,r)=>s+(r.issuesFound||0),0));
-    const resolveMap=infras.map(inf=>civRows.filter(r=>r.infrastructure===inf).reduce((s,r)=>s+(r.resolved||0),0));
-    mkBar('shCivilIssue',infras,[
-      {label:'Issues',data:issueMap,backgroundColor:C.red,borderRadius:3,borderWidth:0},
-      {label:'Resolved',data:resolveMap,backgroundColor:C.green,borderRadius:3,borderWidth:0}
-    ],{indexAxis:'y'});
-    document.getElementById('shCivilTb').innerHTML=D.shelterCivil.map(r=>{
-      const cp=r.compliancePct!=null?Number(r.compliancePct)*100:null;
-      return`<tr><td>${r.month}</td><td>${r.infrastructure}</td><td>${r.location}</td>
-        <td class="num">${fmt(r.plannedChecks)}</td><td class="num">${fmt(r.actualChecks)}</td>
-        <td class="num">${fmt(r.issuesFound)}</td><td class="num">${fmt(r.resolved)}</td>
-        <td class="num">${cp!=null?cp.toFixed(0)+'%':'—'}</td><td>${tagHtml(r.status)}</td></tr>`;
-    }).join('');
-  }
-
-  // §4 Landscape
-  if(D.shelterLandscape.length){
-    buildMFCustom('shLandMF',[...new Set(D.shelterLandscape.map(r=>r.month))].sort(),'shLand',renderShelter);
-    document.getElementById('shLandTb').innerHTML=D.shelterLandscape.map(r=>{
-      const cp=r.compliancePct!=null?Number(r.compliancePct)*100:null;
-      return`<tr><td>${r.month}</td><td>${r.areaType}</td><td>${r.location}</td>
-        <td class="num">${fmt(r.plannedChecks)}</td><td class="num">${fmt(r.actualChecks)}</td>
-        <td class="num">${fmt(r.issuesFound)}</td><td class="num">${fmt(r.resolved)}</td>
-        <td class="num">${cp!=null?cp.toFixed(0)+'%':'—'}</td><td>${tagHtml(r.status)}</td></tr>`;
-    }).join('');
-  }
-
-  // §5 Pest Management
-  if(D.shelterPest.length){
-    const pestMonths=[...new Set(D.shelterPest.map(r=>r.month))].sort();
-    buildMFCustom('shPestMF',pestMonths,'shPest',renderShelter);
-    const pestSel=selMonth['shPest']||pestMonths[pestMonths.length-1];
-    const pestRows=D.shelterPest.filter(r=>r.month===pestSel);
-    const ptypes=[...new Set(pestRows.map(r=>r.treatmentType||''))];
-    mkBar('shPestBar',ptypes,[
-      {label:'Effectiveness%',data:ptypes.map(t=>{
-        const rs=pestRows.filter(r=>r.treatmentType===t&&r.effectivenessPct!=null);
-        return rs.length?rs.reduce((s,r)=>s+Number(r.effectivenessPct)*100,0)/rs.length:0;
-      }),backgroundColor:C.green,borderRadius:3,borderWidth:0}
+  // PPM section
+  if(D.shelterPPM.length){
+    buildMFCustom('shPPMMF',ppmMonths,'shPPM',renderShelter);
+    const el=document.getElementById('shPPMMonthLbl');if(el)el.textContent=ppmSel;
+    mkBar('shPPMBar',ppmRows.map(r=>r.activity||''),[
+      {label:'Activities',data:ppmRows.map(()=>1),backgroundColor:ppmRows.map(r=>(r.remarks||'').toLowerCase().includes('quarterly')?C.amber:C.green),borderRadius:3,borderWidth:0}
     ],{plugins:{legend:{display:false}}});
-    mkBar('shPestCov',ptypes,[
-      {label:'Planned',data:ptypes.map(t=>pestRows.filter(r=>r.treatmentType===t).reduce((s,r)=>s+(r.plannedTreatments||0),0)),backgroundColor:C.grey,borderRadius:3,borderWidth:0},
-      {label:'Actual',data:ptypes.map(t=>pestRows.filter(r=>r.treatmentType===t).reduce((s,r)=>s+(r.actualTreatments||0),0)),backgroundColor:C.blue,borderRadius:3,borderWidth:0}
-    ]);
-    document.getElementById('shPestTb').innerHTML=D.shelterPest.map(r=>{
-      const ef=r.effectivenessPct!=null?Number(r.effectivenessPct)*100:null;
-      return`<tr><td>${r.month}</td><td>${r.treatmentType}</td><td>${r.location}</td>
-        <td class="num">${fmt(r.plannedTreatments)}</td><td class="num">${fmt(r.actualTreatments)}</td>
-        <td class="num">${ef!=null?ef.toFixed(0)+'%':'—'}</td>
-        <td class="num">${fmt(r.complaints)}</td><td>${tagHtml(r.status)}</td></tr>`;
-    }).join('');
+    document.getElementById('shPPMTb').innerHTML=D.shelterPPM.map(r=>
+      `<tr><td>${r.month}</td><td>${r.activity||'—'}</td><td>${r.ppmDate||'—'}</td><td>${r.remarks||'—'}</td></tr>`
+    ).join('');
   }
 }
 
