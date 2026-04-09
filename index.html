@@ -1936,13 +1936,15 @@ function parseNewTemplate(wb,filename){
     for(var mn2 in mmap){if(fn.includes(mn2)){month=yr+'-'+mmap[mn2];break;}}
   }
 
-  // Tier 3 – YYYY-MM embedded anywhere in Instructions sheet text
+  // Tier 3 – YYYY-MM embedded anywhere in Instructions sheet text (skip example/format hint cells)
   if(!month){
     outer3: for(var ii=0;ii<Math.min(35,iRaw.length);ii++){
       var row=iRaw[ii]||[];
       for(var jj=0;jj<row.length;jj++){
         if(row[jj]==null)continue;
-        var m3=String(row[jj]).trim().match(/(\d{4}-\d{2})/);
+        var cellStr=String(row[jj]).trim();
+        if(cellStr.toLowerCase().includes('e.g.')||cellStr.toLowerCase().includes('example')||cellStr.toLowerCase().includes('format:'))continue;
+        var m3=cellStr.match(/(\d{4}-\d{2})/);
         if(m3){month=m3[1];break outer3;}
       }
     }
@@ -4337,26 +4339,24 @@ function renderEnergy(){
 
   // ── TABLE 5: Villa-wise Energy ────────────────
   const villas=D.energyVilla||[];
-  const clusterNames=['RP','MRP','GP','VP','MDP','CP','CHP','SP','TP'];
-  const clColors=[C.yellow,C.green,C.blue,C.purple,C.amber,C.orange,'#94d1e8','#7ec845','#e87d7d'];
   // Use latest month in villa data
   const villaMonths=[...new Set(villas.map(v=>v.month))].sort();
   const latestVMonth=villaMonths[villaMonths.length-1]||'';
   const villasForMonth=villas.filter(v=>v.month===latestVMonth);
-  document.getElementById('villaMonthLbl').textContent=latestVMonth;
+  const lbl=document.getElementById('villaMonthLbl');if(lbl)lbl.textContent=latestVMonth;
   // Aggregate by cluster
   const clusterTotals={};
   villasForMonth.forEach(v=>{if(!clusterTotals[v.cluster])clusterTotals[v.cluster]=0;clusterTotals[v.cluster]+=(v.consumption||0);});
-  const activeClusters=clusterNames.filter(c=>clusterTotals[c]>0);
-  const activeColors=activeClusters.map(c=>clColors[clusterNames.indexOf(c)]);
+  const activeClusters=clusters.filter(c=>clusterTotals[c]>0);
+  const activeColors=activeClusters.map(c=>clColors[clusters.indexOf(c)]);
   const clusterVals=activeClusters.map(c=>clusterTotals[c]);
   const villaTot=clusterVals.reduce((a,b)=>a+b,0);
-  document.getElementById('villaEnergyTot').textContent=fmt(villaTot)||'—';
+  const vtEl=document.getElementById('villaEnergyTot');if(vtEl)vtEl.textContent=fmt(villaTot)||'—';
   if(activeClusters.length){
     mkBar('villaEnergyBar',activeClusters,[{label:'Consumption (kWh)',data:clusterVals,backgroundColor:activeColors,borderRadius:4,borderWidth:0}]);
     mkDonut('villaEnergyDonut',activeClusters,clusterVals,activeColors);
   }
-  document.getElementById('villaTb').innerHTML=villasForMonth.length
+  const vtb=document.getElementById('villaTb');if(vtb)vtb.innerHTML=villasForMonth.length
     ? villasForMonth.map(v=>`<tr><td>${v.villa}</td><td class="num">${fmt(v.opening)}</td><td class="num">${fmt(v.closing)}</td><td class="num" style="color:var(--accent)">${fmt(v.consumption)}</td></tr>`).join('')
     : `<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:20px">Upload an Excel file with a "Villa Energy" sheet to see villa-wise data</td></tr>`;
 }
